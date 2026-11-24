@@ -2296,5 +2296,121 @@ const sfx = (() => {
   show(start < 0 ? 0 : start, false);
 })();
 </script>
+<!-- Firebase Realtime Database Sync for Wishes & Quiz Leaderboard -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+(function () {
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6FdEiYovhijEqJS_xG07_I6QrswrT6KE",
+    authDomain: "andriya-birthday.firebaseapp.com",
+    databaseURL: "https://andriya-birthday-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "andriya-birthday",
+    storageBucket: "andriya-birthday.firebasestorage.app",
+    messagingSenderId: "614123115467",
+    appId: "1:614123115467:web:6a30c92d56f395c5efdc4e",
+    measurementId: "G-BX78PYK133"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.database();
+
+  const WISHES_KEY = "andriya-wishes-final-v3";
+  const BOARD_KEY = "andriya-quiz-board-v2";
+
+  let lastRemoteWishesJson = "";
+  let lastRemoteBoardJson = "";
+  let syncingFromRemote = false;
+
+  function triggerUiRefresh() {
+    // Dispatch a storage event & try calling common render/init functions if present
+    try {
+      window.dispatchEvent(new StorageEvent("storage", { key: WISHES_KEY }));
+      window.dispatchEvent(new StorageEvent("storage", { key: BOARD_KEY }));
+    } catch (_) {}
+
+    if (typeof renderWishes === "function") {
+      try { renderWishes(); } catch (_) {}
+    }
+    if (typeof renderLeaderboard === "function") {
+      try { renderLeaderboard(); } catch (_) {}
+    }
+  }
+
+  // Listen to cloud wishes and update localStorage + UI
+  db.ref("wishes").on("value", (snapshot) => {
+    const val = snapshot.val();
+    const list = val
+      ? Object.entries(val).map(([key, item]) => ({
+          id: (item && item.id) || key,
+          _fbKey: key,
+          ...(typeof item === "object" && item !== null ? item : {})
+        }))
+      : [];
+
+    const serialized = JSON.stringify(list);
+    if (serialized === lastRemoteWishesJson) return;
+    lastRemoteWishesJson = serialized;
+
+    syncingFromRemote = true;
+    localStorage.setItem(WISHES_KEY, JSON.stringify(list));
+    triggerUiRefresh();
+    setTimeout(() => { syncingFromRemote = false; }, 120);
+  });
+
+  // Listen to cloud quiz leaderboard and update localStorage + UI
+  db.ref("leaderboard").on("value", (snapshot) => {
+    const val = snapshot.val();
+    const list = val
+      ? Object.entries(val).map(([key, item]) => ({
+          _fbKey: key,
+          ...(typeof item === "object" && item !== null ? item : {})
+        }))
+      : [];
+
+    list.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.time || 0) - (b.time || 0));
+
+    const serialized = JSON.stringify(list);
+    if (serialized === lastRemoteBoardJson) return;
+    lastRemoteBoardJson = serialized;
+
+    syncingFromRemote = true;
+    localStorage.setItem(BOARD_KEY, JSON.stringify(list));
+    triggerUiRefresh();
+    setTimeout(() => { syncingFromRemote = false; }, 120);
+  });
+
+  // Watch localStorage writes made by your existing wishes & quiz code and push new items to Firebase
+  const originalSetItem = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function (key, value) {
+    originalSetItem(key, value);
+    if (syncingFromRemote) return;
+
+    try {
+      const parsed = JSON.parse(value);
+      if (!Array.isArray(parsed)) return;
+
+      if (key === WISHES_KEY) {
+        parsed.forEach((wish) => {
+          if (wish && !wish._fbKey) {
+            const cleanWish = { ...wish };
+            db.ref("wishes").push(cleanWish);
+          }
+        });
+      } else if (key === BOARD_KEY) {
+        parsed.forEach((entry) => {
+          if (entry && !entry._fbKey) {
+            const cleanEntry = { ...entry };
+            db.ref("leaderboard").push(cleanEntry);
+          }
+        });
+      }
+    } catch (_) {}
+  };
+})();
+</script>
+
 </body>
 </html>
