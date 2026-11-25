@@ -32,7 +32,7 @@
   --cyan-soft:#E6FFFA;
   --cyan-mid: #81E6D9;   /* teal-cyan accent */
   --cyan-dk:  #1F6E83;   /* cyan for text on light backgrounds */
-  --bunting: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%2758%27%20viewBox%3D%270%200%20160%2058%27%3E%3Cpath%20d%3D%27M0%205%20Q80%2033%20160%205%27%20fill%3D%27none%27%20stroke%3D%27%23A58BDB%27%20stroke-width%3D%271.6%27%2F%3E%3Cpolygon%20points%3D%278%2C7.7%2032%2C14.0%2020%2C38.1%27%20fill%3D%27%23FFB5CB%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%29%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%2748%2C16.8%2072%2C18.9%2060%2C45.1%27%20fill%3D%27%23F7DE92%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%29%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%2788%2C18.9%20112%2C16.8%20100%2C45.1%27%20fill%3D%27%2381E6D9%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%29%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%27128%2C14.0%20152%2C7.7%20140%2C38.1%27%20fill%3D%27%23B794F6%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%29%27%20stroke-width%3D%27.6%27%2F%3E%3C%2Fsvg%3E");
+  --bunting: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%2758%27%20viewBox%3D%270%200%20160%2058%27%3E%3Cpath%20d%3D%27M0%205%20Q80%2033%20160%205%27%20fill%3D%27none%27%20stroke%3D%27%23A58BDB%27%20stroke-width%3D%271.6%27%2F%3E%3Cpolygon%20points%3D%278%2C7.7%2032%2C14.0%2020%2C38.1%27%20fill%3D%27%23FFB5CB%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%29%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%2748%2C16.8%2072%2C18.9%2060%2C45.1%27%20fill%3D%27%23F7DE92%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%2788%2C18.9%20112%2C16.8%20100%2C45.1%27%20fill%3D%27%2381E6D9%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%27%20stroke-width%3D%27.6%27%2F%3E%3Cpolygon%20points%3D%27128%2C14.0%20152%2C7.7%20140%2C38.1%27%20fill%3D%27%23B794F6%27%20stroke%3D%27rgba%2875%2C51%2C85%2C.15%27%20stroke-width%3D%27.6%27%2F%3E%3C%2Fsvg%3E");
   --star: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27%23F7C948%27%20stroke%3D%27%23C79A2B%27%20stroke-width%3D%271%27%20d%3D%27M12%202l2.9%206.6%207.1.6-5.4%204.7%201.7%207-6.3-3.8-6.3%203.8%201.7-7L2%209.2l7.1-.6z%27%2F%3E%3C%2Fsvg%3E");
 
   --font-display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
@@ -380,24 +380,30 @@ main.revealed { visibility: visible; }
 .form-msg { min-height: 1.6em; margin-top: 12px; text-align: center; font-weight: 700; color: var(--gold-dk); }
 .form-msg.err { color: #B03A2E; }
 
-.board-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; padding: 0 4px; }
+.board-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 460px; margin: 0 auto 12px; padding: 0 4px; }
 .board-head h3 { font-family: var(--font-display); font-size: 1.3rem; }
 
+/* Vertical framed rectangular bulletin board */
 .cork {
-  padding: 22px 16px; min-height: 240px;
-  border: 3px solid var(--gold-lt); border-radius: var(--r-lg);
-  background: radial-gradient(circle, rgba(183,148,246,.4) 1.5px, transparent 2px) 0 0 / 20px 20px, var(--lav-soft);
-  box-shadow: inset 0 2px 10px rgba(148,105,15,.1), var(--shadow);
+  max-width: 460px;
+  min-height: 520px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  border: 8px solid #3A2A22;
+  outline: 3px solid var(--gold);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle, rgba(75,51,85,.14) 1px, transparent 1.4px) 0 0 / 14px 14px,
+    linear-gradient(180deg, #E8CFAF 0%, #D9B991 100%);
+  box-shadow: inset 0 0 18px rgba(58,42,34,.25), 0 14px 28px rgba(58,42,34,.24);
 }
 .wish-viewport { overflow: hidden; touch-action: pan-y; }
 .wish-track { display: flex; transition: transform .55s cubic-bezier(.65,.05,.25,1); }
 .notes-page {
   flex: 0 0 100%; min-width: 0; align-content: start; align-items: start;
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 14px;
-  padding: 14px 8px 22px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 6px;
+  padding: 6px 4px 12px;
 }
-@media (min-width: 560px) { .notes-page { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 840px) { .notes-page { grid-template-columns: repeat(5, 1fr); gap: 22px 16px; } }
 
 .wish-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
 .pager-mid { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 130px; }
@@ -408,42 +414,44 @@ main.revealed { visibility: visible; }
 .wish-pager .dots button::after { content: ""; position: absolute; inset: -9px; }
 .round-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
 
-/* compact, cute sticky notes: pastel pin, curled paper corner, little sparkle */
+/* Tilted overlapping sticky notes with full text readability */
 .note {
-  position: relative; min-height: 96px; padding: 26px 11px 11px;
+  position: relative; min-height: 124px; padding: 24px 11px 11px;
   display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
-  background: linear-gradient(160deg, rgba(255,255,255,.65), transparent 55%), var(--n, var(--blush));
-  border-radius: 7px 7px 4px 12px;
-  box-shadow: 0 5px 10px rgba(75,51,85,.15), 0 0 0 1px rgba(255,255,255,.55) inset;
-  transform: rotate(var(--tilt, 0deg));
+  background: var(--n, var(--blush));
+  border-radius: 4px;
+  border: 1px solid rgba(75,51,85,.14);
+  box-shadow: 0 6px 12px rgba(58,42,34,.2);
+  transform: rotate(var(--r, -2deg));
   transition: transform .2s ease, box-shadow .2s ease;
+  z-index: 1;
 }
-@media (hover: hover) { .note:hover { transform: rotate(0deg) scale(1.04); box-shadow: 0 9px 16px rgba(75,51,85,.2); z-index: 2; } }
+.notes-page .note:nth-child(2) { --r: 2.5deg;  margin-top: 14px; margin-left: -6px; z-index: 2; }
+.notes-page .note:nth-child(3) { --r: -2.8deg; margin-top: -8px; margin-right: -6px; z-index: 2; }
+.notes-page .note:nth-child(4) { --r: 1.8deg;  margin-top: 8px; margin-left: -8px; z-index: 3; }
+.notes-page .note:nth-child(5) { --r: -1.6deg; margin-top: -6px; z-index: 3; }
+
+@media (hover: hover) {
+  .note:hover { transform: rotate(0deg) translateY(-4px) scale(1.03); box-shadow: 0 12px 20px rgba(58,42,34,.28); z-index: 15; }
+}
+.note:focus-within { z-index: 15; }
 .note::before {
-  content: ""; position: absolute; top: 7px; left: 50%; width: 12px; height: 12px; margin-left: -6px;
-  border-radius: 50%; box-shadow: 0 2px 3px rgba(0,0,0,.22);
+  content: ""; position: absolute; top: 7px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px;
+  border-radius: 50%; box-shadow: 0 2px 3px rgba(0,0,0,.28);
   background: radial-gradient(circle at 35% 30%, #fff, var(--pin, var(--gold)) 70%);
 }
-.note::after {
-  content: ""; position: absolute; right: 0; bottom: 0; width: 17px; height: 17px; border-radius: 0 0 4px 0;
-  background: linear-gradient(to bottom right, rgba(255,255,255,.8) 0 50%, var(--lav-soft) 50% 100%);
-  filter: drop-shadow(-1px -1px 1px rgba(75,51,85,.2));
-}
-.note[data-c="blush"]    { --n: var(--blush);    --pin: #F29BB5; }
-.note[data-c="mint"]     { --n: var(--mint);     --pin: #5FCFA0; }
-.note[data-c="peach"]    { --n: var(--peach);    --pin: #F5A66B; }
-.note[data-c="lavender"] { --n: var(--lavender); --pin: var(--lav-deep); }
-.note[data-c="cyan"]     { --n: var(--cyan);     --pin: #2FB5CC; }
-.note.new { animation: noteIn .55s cubic-bezier(.2,1.2,.4,1) backwards; }
-@keyframes noteIn { from { transform: scale(.5) rotate(-14deg) translateY(-24px); opacity: 0; } }
-.note-deco { position: absolute; top: 5px; left: 7px; font-size: .8rem; line-height: 1; animation: noteSparkle 3.2s ease-in-out infinite; }
-@keyframes noteSparkle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.25) rotate(14deg); } }
+.note[data-c="blush"]    { --n: var(--blush);    --pin: #E65C8A; }
+.note[data-c="mint"]     { --n: var(--mint);     --pin: #2FA872; }
+.note[data-c="peach"]    { --n: var(--peach);    --pin: #E07A38; }
+.note[data-c="lavender"] { --n: var(--lavender); --pin: #8A5CE6; }
+.note[data-c="cyan"]     { --n: var(--cyan);     --pin: #1B95B0; }
+.note.new { animation: noteIn .5s cubic-bezier(.2,1.2,.4,1) backwards; }
+@keyframes noteIn { from { transform: scale(.92) translateY(-10px); opacity: 0; } }
 
-.note .wish { font-family: var(--font-display); font-size: .92rem; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; }
-.note .from { font-weight: 700; font-size: .8rem; text-align: right; padding-right: 10px; overflow-wrap: anywhere; }
-.note .from::after { content: " ✦"; color: var(--lav-deep); }
-.empty-board { grid-column: 1 / -1; text-align: center; padding: 30px 10px; font-family: var(--font-display); color: var(--plum-soft); }
-.empty-board span { display: block; font-size: 2.6rem; margin-bottom: 6px; }
+.note .wish { font-family: var(--font-display); font-size: .9rem; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; }
+.note .from { font-weight: 700; font-size: .78rem; text-align: right; overflow-wrap: anywhere; }
+.empty-board { grid-column: 1 / -1; text-align: center; padding: 120px 12px; font-family: var(--font-display); color: var(--plum); }
+.empty-board span { display: block; font-size: 2.4rem; margin-bottom: 6px; }
 
 /* ----- Letter ----- */
 #letter { display: flex; padding-top: 62px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
@@ -546,7 +554,7 @@ main.revealed { visibility: visible; }
 .letter-actions { margin-top: 14px; text-align: center; }
 
 @media (min-width: 720px) {
-  .cork { padding: 28px 24px; }
+  .cork { padding: 24px 20px; }
   .letter-stage { --lh: 32px; --ml: 52px; }
   .paper-scroll { font-size: 1.6rem; padding-right: 30px; }
   .paper-scroll h3 { font-size: 2.2rem; }
@@ -773,8 +781,8 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   <a class="brand" href="#home">🎉 Andriya's 12</a>
   <a href="#photos">Photos</a>
   <a href="#quiz">Quiz</a>
-  <a href="#wishes">Wishes</a>
   <a href="#write-wish">Write a Wish</a>
+  <a href="#wishes">Wishes</a>
   <a href="#games">Games</a>
   <a href="#letter">Letter</a>
 </nav>
@@ -801,7 +809,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 3. PHOTOS (no captions below photos) ============ -->
+  <!-- ============ 3. PHOTOS ============ -->
   <section class="panel" id="photos">
     <div class="wrap">
       <h2 class="section-title">Twelve Years of Awesome</h2>
@@ -860,38 +868,11 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 5a. WISHES BOARD ============ -->
-  <section class="panel" id="wishes">
-    <div class="wrap">
-      <h2 class="section-title">Birthday Wishes Board</h2>
-      <p class="section-sub">Sweet sticky notes pinned for Andriya from everyone!</p>
-
-      <div class="board-head" id="notesTop">
-        <h3>Pinned wishes <span id="wishCount"></span></h3>
-        <button class="btn sm ghost" type="button" data-go="write-wish">✍️ Write a wish</button>
-      </div>
-      <div class="cork">
-        <div class="wish-viewport" id="wishViewport" data-carousel role="region" aria-label="Birthday wishes. Swipe sideways for more.">
-          <div class="wish-track" id="notes"></div>
-        </div>
-      </div>
-      <div class="wish-pager" id="wishPager" hidden>
-        <button class="round-btn" id="wishPrev" type="button" aria-label="Previous page of wishes">‹</button>
-        <div class="pager-mid">
-          <span class="pager-text" id="wishPageText" aria-live="polite">Page 1 of 1</span>
-          <div class="dots" id="wishDots"></div>
-          <span class="pager-hint">Swipe for more</span>
-        </div>
-        <button class="round-btn" id="wishNext" type="button" aria-label="Next page of wishes">›</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 5b. WRITE A WISH ============ -->
+  <!-- ============ 5a. WRITE A WISH ============ -->
   <section class="panel" id="write-wish">
     <div class="wrap">
       <h2 class="section-title">Write a Birthday Wish</h2>
-      <p class="section-sub">Pick a sticky note color and pin your message to Andriya's board.</p>
+      <p class="section-sub">Pick a sticky note color and pin your message to Andriya's bulletin board.</p>
 
       <div class="card wish-form" role="group" aria-labelledby="wishFormTitle">
         <h3 class="form-title" id="wishFormTitle">Pin a birthday wish</h3>
@@ -918,6 +899,33 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
         <div class="center"><button class="btn" id="pinBtn" type="button">Pin my wish</button></div>
         <p class="form-msg" id="wishMsg" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5b. WISHES BULLETIN BOARD ============ -->
+  <section class="panel" id="wishes">
+    <div class="wrap">
+      <h2 class="section-title">Birthday Wishes Board</h2>
+      <p class="section-sub">Sticky notes pinned for Andriya.</p>
+
+      <div class="board-head" id="notesTop">
+        <h3>Pinned wishes <span id="wishCount"></span></h3>
+        <button class="btn sm ghost" type="button" data-go="write-wish">✍️ Write a wish</button>
+      </div>
+      <div class="cork">
+        <div class="wish-viewport" id="wishViewport" data-carousel role="region" aria-label="Birthday wishes bulletin board. Swipe sideways for more.">
+          <div class="wish-track" id="notes"></div>
+        </div>
+      </div>
+      <div class="wish-pager" id="wishPager" hidden>
+        <button class="round-btn" id="wishPrev" type="button" aria-label="Previous page of wishes">‹</button>
+        <div class="pager-mid">
+          <span class="pager-text" id="wishPageText" aria-live="polite">Page 1 of 1</span>
+          <div class="dots" id="wishDots"></div>
+          <span class="pager-hint">Swipe for more</span>
+        </div>
+        <button class="round-btn" id="wishNext" type="button" aria-label="Next page of wishes">›</button>
       </div>
     </div>
   </section>
@@ -1085,19 +1093,12 @@ You were the best gift I've ever received in my life. I love you, byeee!`,
   signature: "Alphine Sunil"
 };
 
-// Sample notes shown when the board has no wishes yet. Colors: blush, mint, peach, lavender, cyan.
-const STARTER_WISHES = [
-  { name: "Your biggest fan", color: "blush",    text: "Happy 12th birthday, Andriya! Wishing you a day full of cake, chips and giggles! 🎂" },
-  { name: "A friend",         color: "mint",     text: "Twelve looks amazing on you. Go have the most fun day ever!" },
-  { name: "The Birthday Crew", color: "lavender", text: "May this year bring you lots of play time, puppies and silly jokes! 🐶" }
-];
-
 /* =========================================================
    HELPERS
    ========================================================= */
 const $ = (id) => document.getElementById(id);
 
-try { ["andriya-quiz-board", "andriya-wishes-board", "andriya-wishes-board-v2", "andriya-balloon-best"].forEach(k => localStorage.removeItem(k)); } catch (e) { /* storage blocked */ }
+try { ["andriya-quiz-board", "andriya-wishes-board", "andriya-wishes-board-v2", "andriya-balloon-best"].forEach(k => localStorage.removeItem(k)); } catch (e) {}
 
 const store = (() => {
   const mem = {};
@@ -1220,7 +1221,7 @@ muteBtn.addEventListener("click", () => {
 });
 
 /* =========================================================
-   PHOTO MONTAGE (no captions below photos)
+   PHOTO MONTAGE
    ========================================================= */
 (function slideshow() {
   const track = $("track"), dots = $("dots");
@@ -1876,7 +1877,7 @@ const sfx = (() => {
 })();
 
 /* =========================================================
-   WISHES BOARD & WRITE A WISH
+   WISHES BULLETIN BOARD & WRITE A WISH (no automated wishes, no duplicates)
    ========================================================= */
 (function wishesBoard() {
   const KEY = "andriya-wishes-final-v3";
@@ -1888,46 +1889,45 @@ const sfx = (() => {
 
   const clean = (w) => ({
     id: String(w.id || ("w" + Math.random().toString(36).slice(2))),
-    name: String(w.name || "A friend").slice(0, MAX_NAME),
-    text: String(w.text || "").slice(0, MAX_TEXT),
+    name: String(w.name || "").trim().slice(0, MAX_NAME),
+    text: String(w.text || "").trim().slice(0, MAX_TEXT),
     color: COLORS.includes(w.color) ? w.color : "blush",
     createdAt: Number(w.createdAt) || 0
   });
 
-  function load() {
-    const raw = store.get(KEY);
-    if (raw === null) {
-      const seed = STARTER_WISHES.map((w, i) => clean({ ...w, id: "starter-" + i, createdAt: i + 1 }));
-      store.set(KEY, JSON.stringify(seed));
-      return seed;
+  function dedupeWishes(arr) {
+    const seenIds = new Set();
+    const seenContent = new Set();
+    const out = [];
+    for (const raw of arr) {
+      const w = clean(raw);
+      if (!w.name || !w.text) continue;
+      const contentKey = w.name.toLowerCase() + "\0" + w.text.toLowerCase();
+      if (seenIds.has(w.id) || seenContent.has(contentKey)) continue;
+      seenIds.add(w.id);
+      seenContent.add(contentKey);
+      out.push(w);
     }
+    return out;
+  }
+
+  function load() {
     try {
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr.map(clean).filter(w => w.text) : [];
+      const arr = JSON.parse(store.get(KEY));
+      return Array.isArray(arr) ? dedupeWishes(arr) : [];
     } catch (e) { return []; }
   }
   let wishes = load();
   const save = () => store.set(KEY, JSON.stringify(wishes));
 
-  function hashOf(id) {
-    let h = 0;
-    for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) | 0;
-    return Math.abs(h);
-  }
-  const tilt = id => ((hashOf(id) % 7) - 3) * 0.9;
-  const DECOS = ["🎂", "✨", "🎈", "⭐", "🎁", "💜", "🧁", "🎉"];
-  const decoFor = id => DECOS[(hashOf(id) >> 3) % DECOS.length];
-
   function buildNote(w, isNew) {
     const note = document.createElement("article");
     note.className = "note" + (isNew ? " new" : "");
     note.dataset.c = w.color;
-    note.style.setProperty("--tilt", tilt(w.id).toFixed(1) + "deg");
 
-    const text = document.createElement("p");  text.className = "wish";  text.textContent = w.text;
-    const from = document.createElement("p");  from.className = "from";  from.textContent = "— " + w.name;
-    const deco = document.createElement("span");  deco.className = "note-deco";  deco.textContent = decoFor(w.id);  deco.setAttribute("aria-hidden", "true");
-    note.append(deco, text, from);
+    const text = document.createElement("p"); text.className = "wish"; text.textContent = w.text;
+    const from = document.createElement("p"); from.className = "from"; from.textContent = "— " + w.name;
+    note.append(text, from);
     return note;
   }
 
@@ -1978,7 +1978,7 @@ const sfx = (() => {
         const e = document.createElement("div");
         e.className = "empty-board";
         e.innerHTML = "<span>📌</span>";
-        e.appendChild(document.createTextNode("The board is empty. Be the first to pin a wish for Andriya!"));
+        e.appendChild(document.createTextNode("No wishes pinned yet."));
         pg.appendChild(e);
       }
       wishes.slice(p * PER_PAGE, (p + 1) * PER_PAGE).forEach(w => pg.appendChild(buildNote(w, w.id === added)));
@@ -2018,8 +2018,7 @@ const sfx = (() => {
       color,
       createdAt: Date.now()
     });
-    wishes.unshift(w);
-    wishes = wishes.slice(0, MAX_NOTES);
+    wishes = dedupeWishes([w, ...wishes]).slice(0, MAX_NOTES);
     lastAdded = w.id;
     save(); render();
     if (typeof window.__pushCloudWish === "function") window.__pushCloudWish(w);
@@ -2029,7 +2028,6 @@ const sfx = (() => {
     const r = $("pinBtn").getBoundingClientRect();
     confettiBurst(r.left + r.width / 2, r.top, 70);
 
-    // Automatically slide over to the Wishes board so you can see your newly pinned note right away
     setTimeout(() => {
       if (typeof window.__goSection === "function") window.__goSection("wishes");
       say("", false);
@@ -2061,7 +2059,7 @@ const sfx = (() => {
 
   window.__setCloudWishes = function (cloudList) {
     if (!Array.isArray(cloudList)) return;
-    wishes = cloudList.map(clean).filter(w => w.text);
+    wishes = dedupeWishes(cloudList);
     save();
     render();
   };
@@ -2286,26 +2284,15 @@ const sfx = (() => {
 
     db.ref("wishes").on("value", (snapshot) => {
       const val = snapshot.val();
-      if (!val) {
-        // Seed starter wishes to Firebase once if the cloud database is completely empty
-        STARTER_WISHES.forEach((w, i) => {
-          db.ref("wishes").push({
-            id: "starter-" + i,
-            name: w.name,
-            text: w.text,
-            color: w.color,
-            createdAt: i + 1
-          }).catch(() => {});
-        });
-        return;
-      }
-      const list = Object.entries(val).map(([key, item]) => ({
-        id: (item && item.id) || key,
-        name: item && item.name,
-        text: item && item.text,
-        color: item && item.color,
-        createdAt: (item && item.createdAt) || 0
-      }));
+      const list = val
+        ? Object.entries(val).map(([key, item]) => ({
+            id: (item && item.id) || key,
+            name: item && item.name,
+            text: item && item.text,
+            color: item && item.color,
+            createdAt: (item && item.createdAt) || 0
+          }))
+        : [];
       list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       if (typeof window.__setCloudWishes === "function") window.__setCloudWishes(list);
     });
@@ -2319,9 +2306,7 @@ const sfx = (() => {
       try { localStorage.setItem("andriya-quiz-board-v2", JSON.stringify(list)); } catch (_) {}
       if (typeof window.renderLeaderboard === "function") window.renderLeaderboard();
     });
-  } catch (e) {
-    /* Offline or blocked: localStorage fallback keeps working */
-  }
+  } catch (e) {}
 })();
 </script>
 </body>
