@@ -54,7 +54,6 @@ body {
   background: var(--cream);
   line-height: 1.6;
   font-size: 17px;
-  /* the page is a fixed-size stage: nav on top, sliding panels below */
   height: 100vh; height: 100dvh;
   display: flex; flex-direction: column;
   overflow: hidden;
@@ -68,8 +67,7 @@ a, button, label { touch-action: manipulation; }
 
 /* soft pastel background blobs */
 .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; background:
-  linear-gradient(180deg, #FFF8F1 0%, #F3EBFF 38%, #E6FFFA 100%); }
-.bg-blobs { pointer-events: none; }
+  linear-gradient(180deg, #FFF8F1 0%, #F3EBFF 38%, #E6FFFA 100%); pointer-events: none; }
 .bg-blobs span { position: absolute; border-radius: 50%; opacity: .8; }
 .bg-blobs span:nth-child(1) { width: 440px; height: 440px; background: radial-gradient(circle, var(--blush) 0%, transparent 68%);    top: -150px;  left: -150px; }
 .bg-blobs span:nth-child(2) { width: 540px; height: 540px; background: radial-gradient(circle, var(--lav-deep) 0%, transparent 68%); top: 18%;     right: -230px; opacity: .45; }
@@ -82,6 +80,7 @@ a, button, label { touch-action: manipulation; }
 .gate {
   position: fixed; inset: 0; z-index: 100;
   display: grid; place-items: center; padding: 20px;
+  overflow: hidden;
   background: radial-gradient(circle at 30% 20%, var(--blush), transparent 55%),
               radial-gradient(circle at 80% 80%, var(--lavender), transparent 55%),
               radial-gradient(circle at 12% 88%, var(--cyan), transparent 50%),
@@ -90,17 +89,17 @@ a, button, label { touch-action: manipulation; }
 }
 .gate.leaving { opacity: 0; visibility: hidden; pointer-events: none; }
 .gate-card {
+  position: relative; z-index: 2;
   width: min(440px, 100%);
   text-align: center;
   padding: 36px 26px 32px;
   background: rgba(255,255,255,.85);
   border: 3px solid var(--gold-lt);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow), 0 0 0 8px rgba(203,190,245,.3);
+  box-shadow: var(--shadow), 0 0 0 8px rgba(216,194,255,.4), 0 0 44px rgba(183,148,246,.35);
   animation: gateIn .8s cubic-bezier(.2,.9,.3,1.2) both;
 }
 .gate-balloons { font-size: 3rem; letter-spacing: .1em; animation: bob 3s ease-in-out infinite; }
-.gate-card { position: relative; z-index: 2; }
 .gate-card h1 { font-family: var(--font-display); line-height: 1.05; margin: 8px 0 10px; }
 .gate-hb   { display: block; font-size: clamp(1.8rem, 8.5vw, 2.4rem); font-weight: 600; color: var(--plum); }
 .gate-name {
@@ -114,7 +113,6 @@ a, button, label { touch-action: manipulation; }
 .gate-card .gate-sub { font-family: var(--font-display); font-size: 1.25rem; color: var(--plum); margin-bottom: 6px; }
 
 /* floating celebration on the gate */
-.gate { overflow: hidden; }
 .gate-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .gate-fx i {
   position: absolute; top: -24px; width: var(--w); height: var(--h); border-radius: var(--r); background: var(--c); opacity: .92;
@@ -142,8 +140,9 @@ a, button, label { touch-action: manipulation; }
 }
 @media (hover: hover) { .btn:hover { transform: translateY(-2px); } }
 .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #C79A2B; }
-.btn.ghost  { background: var(--white); box-shadow: 0 0 0 2px var(--gold-lt) inset; }
+.btn.ghost  { background: var(--white); box-shadow: 0 0 0 2px var(--lav-deep) inset, 0 0 12px rgba(183,148,246,.25); }
 .btn.ghost:active { box-shadow: 0 0 0 2px var(--gold) inset; }
+.btn.sm { padding: 9px 18px; font-size: .95rem; }
 
 /* =========================================================
    NAV + MUTE
@@ -152,8 +151,9 @@ a, button, label { touch-action: manipulation; }
   position: relative; flex: none; z-index: 50; height: var(--nav-h);
   display: flex; align-items: center; gap: 4px;
   padding: 0 72px 0 14px;
-  background: linear-gradient(90deg, rgba(255,248,241,.97), rgba(243,239,255,.97) 55%, rgba(234,249,252,.97));
-  border-bottom: 2px solid var(--gold-lt);
+  background: linear-gradient(90deg, var(--lav-soft), var(--cyan-soft) 60%, var(--lav-soft));
+  border-bottom: 2px solid var(--lav);
+  box-shadow: 0 4px 16px rgba(183,148,246,.2);
   overflow-x: auto; scrollbar-width: none;
   overscroll-behavior-x: contain;
 }
@@ -185,37 +185,64 @@ a, button, label { touch-action: manipulation; }
 main { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; visibility: hidden; }
 main.revealed { visibility: visible; }
 
-/* the deck: every section is one full-size panel in a horizontal row; the nav slides the row sideways */
 .deck { position: absolute; inset: 0; display: flex; transition: transform .6s cubic-bezier(.65,.05,.25,1); }
 .panel {
+  position: relative;
   flex: 0 0 100%; min-width: 0; height: 100%;
-  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;   /* each panel scrolls up/down on its own */
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
   scrollbar-width: thin;
-  touch-action: pan-y;   /* vertical scroll is the browser's; sideways swipes are ours */
+  touch-action: pan-y;
   padding: 64px 18px calc(72px + env(safe-area-inset-bottom));
 }
+.panel:nth-child(odd)  { background: radial-gradient(ellipse 90% 38% at 50% 0%, rgba(216,194,255,.42), transparent 72%); }
+.panel:nth-child(even) { background: radial-gradient(ellipse 90% 38% at 50% 0%, rgba(196,241,249,.5), transparent 72%); }
+.panel::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 58px; pointer-events: none;
+  background: var(--bunting) repeat-x 0 0 / 160px 58px; transform-origin: 50% 0;
+  animation: buntingSway 5s ease-in-out infinite alternate;
+}
+@keyframes buntingSway { from { transform: rotate(-.5deg); } to { transform: rotate(.5deg); } }
+
 .wrap { max-width: 960px; margin: 0 auto; }
 .section-title { font-family: var(--font-display); font-size: clamp(1.8rem, 6vw, 2.5rem); text-align: center; line-height: 1.15; }
-.section-title::after {   /* soft lavender - cyan - gold underline */
+.section-title::after {
   content: ""; display: block; width: 84px; height: 5px; margin: 10px auto 0; border-radius: 99px;
   background: linear-gradient(90deg, var(--lav), var(--cyan-mid), var(--gold-lt));
 }
 .section-sub   { text-align: center; color: var(--plum-soft); margin: 8px auto 32px; max-width: 520px; }
 
 .card {
+  position: relative;
   background: linear-gradient(180deg, #FFFFFF 0%, #FAF8FF 100%);
   border-radius: var(--r-lg);
   padding: 26px 22px;
-  box-shadow: var(--shadow);
-  border: 2px solid rgba(247,222,146,.55);
+  border: 2px solid rgba(216,194,255,.6);
+  box-shadow: var(--shadow), 0 0 28px rgba(183,148,246,.16);
 }
+@supports ((-webkit-mask-composite: xor) or (mask-composite: exclude)) {
+  .card::before {
+    content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 2px; pointer-events: none;
+    background: linear-gradient(135deg, var(--lav-deep), var(--cyan-mid), var(--gold-lt), var(--lav-deep));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: .5; animation: ringGlow 4.5s ease-in-out infinite alternate;
+  }
+}
+@keyframes ringGlow { from { opacity: .3; } to { opacity: .85; } }
+.quiz-card::after, .game-card::after, .wish-form::after {
+  content: ""; position: absolute; top: -15px; right: -9px; width: 34px; height: 34px; pointer-events: none;
+  background: var(--star) no-repeat center / contain; filter: drop-shadow(0 2px 4px rgba(148,105,15,.35));
+  animation: spin 12s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================================================
    HERO
    ========================================================= */
 #home { display: flex; text-align: center; }
-#home .wrap { margin: auto; }
+#home .wrap { margin: auto; position: relative; z-index: 1; }
 .hero-badge {
+  position: relative;
   width: 118px; height: 118px; margin: 0 auto 14px;
   display: grid; place-items: center; border-radius: 50%;
   font-family: var(--font-display); font-weight: 700; font-size: 3.4rem; color: var(--plum);
@@ -230,33 +257,30 @@ main.revealed { visibility: visible; }
   -webkit-background-clip: text; background-clip: text; color: transparent;
   margin: 4px 0 28px;
 }
-.revealed .hero-badge { animation: pop .9s .1s cubic-bezier(.2,1.4,.4,1) both; }
+.revealed .hero-badge { animation: pop .9s .1s cubic-bezier(.2,1.4,.4,1) both, badgeGlow 3.2s 1.2s ease-in-out infinite alternate; }
 .revealed .hero-line  { animation: rise .7s .35s ease both; }
 .revealed .hero-name  { animation: rise .8s .5s ease both; }
 .revealed .hero-cta   { animation: rise .8s .75s ease both; }
 .home-foot { margin-top: 36px; font-family: var(--font-display); color: var(--plum-soft); }
 @keyframes pop  { from { transform: scale(0) rotate(-40deg); } to { transform: none; } }
 @keyframes rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes badgeGlow { from { filter: drop-shadow(0 0 4px rgba(183,148,246,.4)); } to { filter: drop-shadow(0 0 16px rgba(129,230,217,.8)); } }
 
 /* ----- photo montage ----- */
 .frame {
   position: relative; max-width: 520px; margin: 0 auto;
-  padding: 14px 14px 18px;
+  padding: 14px 14px 16px;
   background: var(--white);
   border-radius: 22px;
   border: 4px solid var(--gold);
-  box-shadow: 0 0 0 6px var(--gold-lt), var(--shadow);
+  box-shadow: 0 0 0 6px var(--gold-lt), 0 0 34px rgba(183,148,246,.4), var(--shadow);
   transform: rotate(-1.2deg);
 }
 .viewport { overflow: hidden; border-radius: 12px; touch-action: pan-y; background: var(--lavender); }
 .track { display: flex; transition: transform .6s cubic-bezier(.65,.05,.25,1); }
 .slide { flex: 0 0 100%; aspect-ratio: 4 / 5; }
 .slide img { width: 100%; height: 100%; object-fit: cover; }
-.caption {
-  min-height: 3.2em; margin-top: 14px; padding: 0 6px;
-  font-family: var(--font-display); font-size: 1.15rem; text-align: center; color: var(--plum);
-}
-.controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 6px; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
 .round-btn {
   width: 46px; height: 46px; border-radius: 50%; font-size: 1.3rem; font-weight: 700;
   background: var(--lav-soft); border: 2px solid var(--gold);
@@ -284,7 +308,7 @@ main.revealed { visibility: visible; }
 .center { text-align: center; }
 
 .quiz-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-display); font-weight: 500; margin-bottom: 10px; }
-.score-pill { background: linear-gradient(135deg, var(--lavender), var(--cyan)); padding: 4px 14px; border-radius: 999px; font-weight: 600; }
+.score-pill { background: linear-gradient(135deg, var(--lavender), var(--cyan)); box-shadow: 0 0 12px rgba(183,148,246,.3); padding: 4px 14px; border-radius: 999px; font-weight: 600; }
 .progress { height: 10px; background: var(--cyan); border-radius: 6px; overflow: hidden; margin-bottom: 22px; }
 .progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--lav), var(--cyan-mid), var(--gold)); transition: width .4s ease; }
 .q-text { font-family: var(--font-display); font-size: 1.4rem; line-height: 1.25; margin-bottom: 18px; }
@@ -319,26 +343,15 @@ main.revealed { visibility: visible; }
 .board .empty { justify-content: center; color: var(--plum-soft); }
 
 /* =========================================================
-   PLACEHOLDER SECTIONS
+   WISHES BOARD & WRITE A WISH
    ========================================================= */
-.grid-2 { display: grid; gap: 18px; grid-template-columns: 1fr; }
-.soon { text-align: center; position: relative; overflow: hidden; }
-.soon .icon { font-size: 3rem; margin-bottom: 6px; }
-.soon h3 { font-family: var(--font-display); font-size: 1.35rem; }
-.soon p  { color: var(--plum-soft); margin-top: 6px; }
-.tag {
-  display: inline-block; margin-top: 14px; padding: 4px 14px; border-radius: 999px;
-  font-family: var(--font-display); font-size: .9rem; font-weight: 500;
-  background: var(--lavender); color: var(--plum);
-}
 .tint-blush { background: linear-gradient(160deg, #fff, var(--blush)); }
 .tint-mint  { background: linear-gradient(160deg, #fff, var(--mint)); }
 .tint-peach { background: linear-gradient(160deg, #fff, var(--peach)); }
 .tint-lav   { background: linear-gradient(160deg, #fff, var(--lavender)); }
 .tint-cyan  { background: linear-gradient(160deg, #fff, var(--cyan)); }
 
-/* ----- Wishes board ----- */
-.wish-form { max-width: 560px; margin: 0 auto 40px; background: linear-gradient(180deg, #FFFFFF 0%, var(--cyan) 160%); }
+.wish-form { max-width: 560px; margin: 0 auto; background: linear-gradient(180deg, #FFFFFF 0%, var(--cyan) 160%); }
 .form-title { font-family: var(--font-display); font-size: 1.4rem; text-align: center; margin-bottom: 18px; }
 .field-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
 .field-row .field { margin-bottom: 0; }
@@ -347,14 +360,14 @@ main.revealed { visibility: visible; }
 
 .swatches { border: 0; margin: 0 0 20px; padding: 0; min-width: 0; }
 .swatches legend { font-family: var(--font-display); font-weight: 500; margin-bottom: 8px; padding: 0; }
-.swatch-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.swatch-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .swatch {
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
   font-size: .82rem; font-weight: 700; cursor: pointer;
 }
 .swatch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .swatch .dot {
-  width: 46px; height: 46px; border-radius: 12px; background: var(--sw);
+  width: 44px; height: 44px; border-radius: 12px; background: var(--sw);
   border: 2px solid rgba(75,51,85,.15); box-shadow: 0 4px 8px rgba(0,0,0,.08);
   transition: transform .15s, box-shadow .15s, border-color .15s;
 }
@@ -367,24 +380,24 @@ main.revealed { visibility: visible; }
 .form-msg { min-height: 1.6em; margin-top: 12px; text-align: center; font-weight: 700; color: var(--gold-dk); }
 .form-msg.err { color: #B03A2E; }
 
-.board-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 0 4px; }
+.board-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; padding: 0 4px; }
 .board-head h3 { font-family: var(--font-display); font-size: 1.3rem; }
 
 .cork {
-  padding: 22px 16px; min-height: 220px;
+  padding: 22px 16px; min-height: 240px;
   border: 3px solid var(--gold-lt); border-radius: var(--r-lg);
   background: radial-gradient(circle, rgba(183,148,246,.4) 1.5px, transparent 2px) 0 0 / 20px 20px, var(--lav-soft);
   box-shadow: inset 0 2px 10px rgba(148,105,15,.1), var(--shadow);
 }
-.wish-viewport { overflow: hidden; touch-action: pan-y; }   /* vertical scroll stays free, sideways swipes flip pages */
+.wish-viewport { overflow: hidden; touch-action: pan-y; }
 .wish-track { display: flex; transition: transform .55s cubic-bezier(.65,.05,.25,1); }
 .notes-page {
   flex: 0 0 100%; min-width: 0; align-content: start; align-items: start;
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 14px;
-  padding: 14px 8px 22px;   /* room for tilted corners and shadows inside the clipped viewport */
+  padding: 14px 8px 22px;
 }
 @media (min-width: 560px) { .notes-page { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 840px) { .notes-page { grid-template-columns: repeat(5, 1fr); gap: 22px 16px; } }   /* 5 notes in one row */
+@media (min-width: 840px) { .notes-page { grid-template-columns: repeat(5, 1fr); gap: 22px 16px; } }
 
 .wish-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
 .pager-mid { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 130px; }
@@ -392,7 +405,7 @@ main.revealed { visibility: visible; }
 .pager-hint { font-size: .85rem; color: var(--plum-soft); }
 .wish-pager .dots { flex-wrap: wrap; justify-content: center; }
 .wish-pager .dots button { position: relative; }
-.wish-pager .dots button::after { content: ""; position: absolute; inset: -9px; }   /* bigger tap area */
+.wish-pager .dots button::after { content: ""; position: absolute; inset: -9px; }
 .round-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
 
 /* compact, cute sticky notes: pastel pin, curled paper corner, little sparkle */
@@ -406,12 +419,12 @@ main.revealed { visibility: visible; }
   transition: transform .2s ease, box-shadow .2s ease;
 }
 @media (hover: hover) { .note:hover { transform: rotate(0deg) scale(1.04); box-shadow: 0 9px 16px rgba(75,51,85,.2); z-index: 2; } }
-.note::before {   /* pastel pin */
+.note::before {
   content: ""; position: absolute; top: 7px; left: 50%; width: 12px; height: 12px; margin-left: -6px;
   border-radius: 50%; box-shadow: 0 2px 3px rgba(0,0,0,.22);
   background: radial-gradient(circle at 35% 30%, #fff, var(--pin, var(--gold)) 70%);
 }
-.note::after {    /* curled bottom-right corner */
+.note::after {
   content: ""; position: absolute; right: 0; bottom: 0; width: 17px; height: 17px; border-radius: 0 0 4px 0;
   background: linear-gradient(to bottom right, rgba(255,255,255,.8) 0 50%, var(--lav-soft) 50% 100%);
   filter: drop-shadow(-1px -1px 1px rgba(75,51,85,.2));
@@ -420,6 +433,7 @@ main.revealed { visibility: visible; }
 .note[data-c="mint"]     { --n: var(--mint);     --pin: #5FCFA0; }
 .note[data-c="peach"]    { --n: var(--peach);    --pin: #F5A66B; }
 .note[data-c="lavender"] { --n: var(--lavender); --pin: var(--lav-deep); }
+.note[data-c="cyan"]     { --n: var(--cyan);     --pin: #2FB5CC; }
 .note.new { animation: noteIn .55s cubic-bezier(.2,1.2,.4,1) backwards; }
 @keyframes noteIn { from { transform: scale(.5) rotate(-14deg) translateY(-24px); opacity: 0; } }
 .note-deco { position: absolute; top: 5px; left: 7px; font-size: .8rem; line-height: 1; animation: noteSparkle 3.2s ease-in-out infinite; }
@@ -431,19 +445,18 @@ main.revealed { visibility: visible; }
 .empty-board { grid-column: 1 / -1; text-align: center; padding: 30px 10px; font-family: var(--font-display); color: var(--plum-soft); }
 .empty-board span { display: block; font-size: 2.6rem; margin-bottom: 6px; }
 
-/* ----- Letter: the paper slides out of / back into the envelope ----- */
+/* ----- Letter ----- */
 #letter { display: flex; padding-top: 62px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
 #letter .wrap { width: 100%; margin: auto; display: flex; flex-direction: column; align-items: center; }
 #letter .section-sub { margin-bottom: 16px; }
 
 .letter-stage {
-  /* all geometry comes from these variables so the paper and envelope always line up */
-  --ew: min(500px, calc(100vw - 36px));            /* envelope width */
-  --eh: calc(var(--ew) * .625);                    /* envelope height (8:5) */
+  --ew: min(500px, calc(100vw - 36px));
+  --eh: calc(var(--ew) * .625);
   --stage-h: clamp(430px, calc(100vh - 362px), 700px);
-  --lh: 28px;                                      /* one ruled line of the paper */
-  --rule: calc(var(--lh) * .8);                    /* where the ruled line sits inside a line */
-  --ml: 36px;                                      /* red margin line position */
+  --lh: 28px;
+  --rule: calc(var(--lh) * .8);
+  --ml: 36px;
   position: relative; width: 100%; height: var(--stage-h); overflow: hidden;
 }
 @supports (height: 100dvh) { .letter-stage { --stage-h: clamp(430px, calc(100dvh - 362px), 700px); } }
@@ -456,7 +469,6 @@ main.revealed { visibility: visible; }
   transition: transform .95s cubic-bezier(.65,.05,.25,1) 0s;
 }
 .env-shadow { position: absolute; inset: 0; border-radius: 0 0 10px 10px; box-shadow: 0 12px 22px rgba(120,80,140,.24); }
-/* clips only the bottom edge: the paper hanging below the envelope is hidden, but it can rise out of the top freely */
 .env-box { position: absolute; inset: 0; clip-path: inset(-3000px 0 0 0 round 0 0 10px 10px); }
 .env-box > * { position: absolute; }
 .env-back  { inset: 0; z-index: 1; background: var(--lav); }
@@ -488,7 +500,6 @@ main.revealed { visibility: visible; }
   font-family: var(--font-hand); font-weight: 700; font-size: 1.45rem; color: var(--plum);
 }
 
-/* the sheet: tucked inside the envelope until opened */
 .paper {
   z-index: 2; left: 3%; width: 94%; top: 10%;
   height: calc(var(--stage-h) - var(--eh) * .08 - 10px);
@@ -496,7 +507,7 @@ main.revealed { visibility: visible; }
   box-shadow: 0 6px 18px rgba(75,51,85,.22), 0 0 0 1px rgba(148,105,15,.14);
   transition: transform .95s cubic-bezier(.65,.05,.25,1) 0s;
 }
-.paper::after {   /* soft fold creases, fixed while the text scrolls */
+.paper::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: linear-gradient(to bottom,
     transparent calc(33.3% - 1px), rgba(75,51,85,.07) 33.3%, rgba(255,255,255,.55) calc(33.3% + 1px), transparent calc(33.3% + 3px),
@@ -520,7 +531,6 @@ main.revealed { visibility: visible; }
 .paper-actions { margin-top: var(--lh); text-align: center; }
 .paper-scroll .btn { line-height: 1.3; font-size: 1rem; }
 
-/* open: the paper slides up out of the envelope while the envelope slips down */
 .letter-stage.open .env-slot {
   transform: translateY(calc(var(--stage-h) / 2 + var(--eh) * .3 - 6px));
   transition: transform .95s cubic-bezier(.65,.05,.25,1) .35s;
@@ -548,24 +558,22 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 /* =========================================================
    MINI-GAMES
    ========================================================= */
-
 .games { display: grid; grid-template-columns: 1fr; gap: 22px; max-width: 640px; margin: 0 auto; }
 .game-card { padding: 22px 18px 26px; display: flex; flex-direction: column; }
 .game-card h3 { font-family: var(--font-display); font-size: 1.5rem; text-align: center; line-height: 1.2; }
 .game-hint { text-align: center; color: var(--plum-soft); font-size: .95rem; margin: 4px 0 14px; }
 
-/* HUD pills */
 .hud { display: flex; gap: 8px; margin-bottom: 10px; }
 .pill {
   flex: 1; text-align: center; padding: 6px 8px; border-radius: 999px; white-space: nowrap;
-  background: linear-gradient(135deg, #FFFFFF, var(--cyan)); border: 2px solid var(--cyan-mid);
+  background: linear-gradient(135deg, #FFFFFF, var(--cyan-soft)); border: 2px solid var(--cyan-mid);
+  box-shadow: 0 0 12px rgba(129,230,217,.35);
   font-family: var(--font-display); font-weight: 500; font-size: .95rem;
 }
 .pill b { font-weight: 700; color: var(--gold-dk); }
 .pill.urgent { background: #FFE0E0; border-color: #E58A8A; }
 .pill.urgent b { color: #B03A2E; }
 
-/* ----- Balloon Pop arena ----- */
 .arena {
   position: relative; height: 340px; overflow: hidden;
   border-radius: var(--r-md); border: 3px solid var(--gold-lt);
@@ -576,7 +584,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     linear-gradient(180deg, #D4EAFF 0%, #EADFFF 55%, #FFE6EE 100%);
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
-.arena.playing { touch-action: none; }   /* rapid taps never scroll or drag the page */
+.arena.playing { touch-action: none; }
 
 .arena-overlay {
   position: absolute; inset: 0; z-index: 5;
@@ -592,7 +600,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   touch-action: none; cursor: pointer;
   animation: bpFloat var(--dur, 5s) linear forwards;
 }
-.balloon::after {   /* string */
+.balloon::after {
   content: ""; position: absolute; left: 50%; top: 74px; width: 2px; height: 18px;
   background: rgba(75,51,85,.35);
 }
@@ -607,7 +615,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   transform-origin: 50% 100%;
   animation: bpSway 1.6s ease-in-out infinite alternate;
 }
-.b-body::after {   /* knot */
+.b-body::after {
   content: ""; position: absolute; bottom: -6px; left: 50%; margin-left: -5px;
   border-left: 5px solid transparent; border-right: 5px solid transparent;
   border-bottom: 8px solid var(--bc, #F29BB5);
@@ -636,7 +644,6 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 @keyframes bpPop   { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.3); opacity: .9; } 100% { transform: scale(1.8); opacity: 0; } }
 @keyframes plusUp  { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -46px); opacity: 0; } }
 
-/* ----- Game feel: combos, sparks, sparkles ----- */
 .combo {
   position: absolute; top: 10px; left: 50%; z-index: 4; transform: translateX(-50%);
   padding: 4px 16px; border-radius: 999px; white-space: nowrap; pointer-events: none; opacity: 0;
@@ -681,37 +688,19 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   .game-card { padding: 26px 24px 28px; }
 }
 
-/* the game needs balloon movement; keep the float, drop only the decorative motion */
 @media (prefers-reduced-motion: reduce) {
   .arena .balloon { animation-duration: var(--dur, 5s) !important; }
 }
 
-/* =========================================================
-   LARGER SCREENS
-   ========================================================= */
 @media (min-width: 720px) {
   body { font-size: 18px; }
   .panel { padding: 74px 24px calc(90px + env(safe-area-inset-bottom)); }
   #letter { padding-top: 72px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
-  .grid-2 { grid-template-columns: 1fr 1fr; }
   .nav { justify-content: center; padding-right: 72px; padding-left: 72px; }
   .card { padding: 34px 32px; }
 }
 
-/* =========================================================
-   PALETTE, GLOW + DECORATION
-   ========================================================= */
-.panel { position: relative; }
-.panel:nth-child(odd)  { background: radial-gradient(ellipse 90% 38% at 50% 0%, rgba(216,194,255,.42), transparent 72%); }
-.panel:nth-child(even) { background: radial-gradient(ellipse 90% 38% at 50% 0%, rgba(196,241,249,.5), transparent 72%); }
-.panel::before {   /* bunting garland across the top of every page */
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 58px; pointer-events: none;
-  background: var(--bunting) repeat-x 0 0 / 160px 58px; transform-origin: 50% 0;
-  animation: buntingSway 5s ease-in-out infinite alternate;
-}
-@keyframes buntingSway { from { transform: rotate(-.5deg); } to { transform: rotate(.5deg); } }
-
-/* entrance: each page's content rises in when the page slides into view */
+/* entrance animation */
 .panel.is-active:not(#home) .wrap > * { animation: riseIn .65s cubic-bezier(.2,.8,.3,1) both; }
 .panel.is-active .wrap > :nth-child(2) { animation-delay: .08s; }
 .panel.is-active .wrap > :nth-child(3) { animation-delay: .16s; }
@@ -719,42 +708,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 .panel.is-active .wrap > :nth-child(n+5) { animation-delay: .32s; }
 @keyframes riseIn { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: 0 0; } }
 
-.nav {
-  background: linear-gradient(90deg, var(--lav-soft), var(--cyan-soft) 60%, var(--lav-soft));
-  border-bottom: 2px solid var(--lav);
-  box-shadow: 0 4px 16px rgba(183,148,246,.2);
-}
-.pill {
-  background: linear-gradient(135deg, #FFFFFF, var(--cyan-soft)); border: 2px solid var(--cyan-mid);
-  box-shadow: 0 0 12px rgba(129,230,217,.35);
-}
-.score-pill { background: linear-gradient(135deg, var(--lav), var(--cyan)); box-shadow: 0 0 12px rgba(183,148,246,.3); }
-.btn.ghost { box-shadow: 0 0 0 2px var(--lav-deep) inset, 0 0 12px rgba(183,148,246,.25); }
-.frame { box-shadow: 0 0 0 6px var(--gold-lt), 0 0 34px rgba(183,148,246,.4), var(--shadow); }
-.gate-card { box-shadow: var(--shadow), 0 0 0 8px rgba(216,194,255,.4), 0 0 44px rgba(183,148,246,.35); }
-
-/* cards: soft lavender glow, plus a gradient ring where the browser supports masks */
-.card { border: 2px solid rgba(216,194,255,.6); box-shadow: var(--shadow), 0 0 28px rgba(183,148,246,.16); }
-@supports ((-webkit-mask-composite: xor) or (mask-composite: exclude)) {
-  .card::before {
-    content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 2px; pointer-events: none;
-    background: linear-gradient(135deg, var(--lav-deep), var(--cyan-mid), var(--gold-lt), var(--lav-deep));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    opacity: .5; animation: ringGlow 4.5s ease-in-out infinite alternate;
-  }
-}
-@keyframes ringGlow { from { opacity: .3; } to { opacity: .85; } }
-.card { position: relative; }
-.quiz-card::after, .game-card::after, .wish-form::after {   /* spinning gold star badge on the corner */
-  content: ""; position: absolute; top: -15px; right: -9px; width: 34px; height: 34px; pointer-events: none;
-  background: var(--star) no-repeat center / contain; filter: drop-shadow(0 2px 4px rgba(148,105,15,.35));
-  animation: spin 12s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
 /* hero artwork */
-#home .wrap { position: relative; z-index: 1; }
 .hero-deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .deco-balloon { position: absolute; width: 50px; height: 83px; opacity: .92; animation: floaty 5s ease-in-out infinite alternate; }
 .deco-balloon.b1 { left: 5%;  top: 16%; color: #FFB5CB; }
@@ -762,21 +716,16 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 .deco-balloon.b3 { left: 11%; bottom: 13%; color: var(--cyan-mid); width: 38px; height: 63px; animation-delay: -3s; }
 .deco-balloon.b4 { right: 12%; bottom: 17%; color: var(--gold-lt); width: 42px; height: 70px; animation-delay: -2.2s; }
 @keyframes floaty { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-16px) rotate(3deg); } }
-.hero-badge { position: relative; }
 .badge-ring { position: absolute; inset: -30px; width: calc(100% + 60px); height: calc(100% + 60px); animation: spin 22s linear infinite; }
-.revealed .hero-badge { animation: pop .9s .1s cubic-bezier(.2,1.4,.4,1) both, badgeGlow 3.2s 1.2s ease-in-out infinite alternate; }
-@keyframes badgeGlow { from { filter: drop-shadow(0 0 4px rgba(183,148,246,.4)); } to { filter: drop-shadow(0 0 16px rgba(129,230,217,.8)); } }
 
-/* twinkling stars in the page background */
 .spk { position: absolute; width: var(--s); height: var(--s); fill: var(--c); opacity: 0; animation: twinkleStar var(--d) ease-in-out var(--dl) infinite; }
 @keyframes twinkleStar { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: .85; transform: scale(1) rotate(45deg); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
-  .spk, .gate-fx, .hero-deco { display: none; }   /* purely decorative motion is simply left out */
+  .spk, .gate-fx, .hero-deco { display: none; }
 }
 
-/* keep this LAST: the hidden attribute must always beat component display rules */
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -804,7 +753,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
 <!-- ============ 1. WELCOME GATE ============ -->
 <div class="gate" id="gate" role="dialog" aria-labelledby="gate-title">
-  <div class="gate-fx" id="gateFx" aria-hidden="true"></div>   <!-- floating confetti + balloons, built by the script -->
+  <div class="gate-fx" id="gateFx" aria-hidden="true"></div>
   <div class="gate-bunting" aria-hidden="true"></div>
   <div class="gate-card">
     <div class="gate-balloons" aria-hidden="true">🎈🎂🎈</div>
@@ -825,6 +774,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   <a href="#photos">Photos</a>
   <a href="#quiz">Quiz</a>
   <a href="#wishes">Wishes</a>
+  <a href="#write-wish">Write a Wish</a>
   <a href="#games">Games</a>
   <a href="#letter">Letter</a>
 </nav>
@@ -851,6 +801,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
+  <!-- ============ 3. PHOTOS (no captions below photos) ============ -->
   <section class="panel" id="photos">
     <div class="wrap">
       <h2 class="section-title">Twelve Years of Awesome</h2>
@@ -858,7 +809,6 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
       <div class="frame" id="frame">
         <div class="viewport" id="viewport" data-carousel><div class="track" id="track"></div></div>
-        <p class="caption" id="caption" aria-live="polite"></p>
         <div class="controls">
           <button class="round-btn" id="prevBtn" aria-label="Previous photo">‹</button>
           <div class="dots" id="dots"></div>
@@ -868,7 +818,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 3. QUIZ ============ -->
+  <!-- ============ 4. QUIZ ============ -->
   <section class="panel" id="quiz">
     <div class="wrap">
       <h2 class="section-title">Who Knows Andriya Best?</h2>
@@ -910,40 +860,15 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 4a. WISHES BOARD ============ -->
+  <!-- ============ 5a. WISHES BOARD ============ -->
   <section class="panel" id="wishes">
     <div class="wrap">
       <h2 class="section-title">Birthday Wishes Board</h2>
-      <p class="section-sub">Pin a sticky note for Andriya. Pinned wishes stay on this device for good.</p>
-
-      <div class="card wish-form" role="group" aria-labelledby="wishFormTitle">
-        <h3 class="form-title" id="wishFormTitle">Pin a birthday wish</h3>
-
-        <label class="field" for="wishName">Your name</label>
-        <input class="input" id="wishName" type="text" maxlength="25" placeholder="Up to 25 characters" autocomplete="off">
-
-        <fieldset class="swatches">
-          <legend>Note color</legend>
-          <div class="swatch-row">
-            <label class="swatch"><input type="radio" name="noteColor" value="blush" checked><span class="dot" style="--sw: var(--blush)"></span>Blush</label>
-            <label class="swatch"><input type="radio" name="noteColor" value="mint"><span class="dot" style="--sw: var(--mint)"></span>Mint</label>
-            <label class="swatch"><input type="radio" name="noteColor" value="peach"><span class="dot" style="--sw: var(--peach)"></span>Peach</label>
-            <label class="swatch"><input type="radio" name="noteColor" value="lavender"><span class="dot" style="--sw: var(--lavender)"></span>Lavender</label>
-          </div>
-        </fieldset>
-
-        <div class="field-row">
-          <label class="field" for="wishText">Your wish</label>
-          <span class="count" id="wishChars">0/180</span>
-        </div>
-        <textarea class="input area" id="wishText" maxlength="180" rows="4" placeholder="Write something sweet for Andriya"></textarea>
-
-        <div class="center"><button class="btn" id="pinBtn" type="button">Pin my wish</button></div>
-        <p class="form-msg" id="wishMsg" aria-live="polite"></p>
-      </div>
+      <p class="section-sub">Sweet sticky notes pinned for Andriya from everyone!</p>
 
       <div class="board-head" id="notesTop">
         <h3>Pinned wishes <span id="wishCount"></span></h3>
+        <button class="btn sm ghost" type="button" data-go="write-wish">✍️ Write a wish</button>
       </div>
       <div class="cork">
         <div class="wish-viewport" id="wishViewport" data-carousel role="region" aria-label="Birthday wishes. Swipe sideways for more.">
@@ -962,7 +887,42 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 4b. MINI-GAMES ============ -->
+  <!-- ============ 5b. WRITE A WISH ============ -->
+  <section class="panel" id="write-wish">
+    <div class="wrap">
+      <h2 class="section-title">Write a Birthday Wish</h2>
+      <p class="section-sub">Pick a sticky note color and pin your message to Andriya's board.</p>
+
+      <div class="card wish-form" role="group" aria-labelledby="wishFormTitle">
+        <h3 class="form-title" id="wishFormTitle">Pin a birthday wish</h3>
+
+        <label class="field" for="wishName">Your name</label>
+        <input class="input" id="wishName" type="text" maxlength="25" placeholder="Up to 25 characters" autocomplete="off">
+
+        <fieldset class="swatches">
+          <legend>Note color</legend>
+          <div class="swatch-row">
+            <label class="swatch"><input type="radio" name="noteColor" value="blush" checked><span class="dot" style="--sw: var(--blush)"></span>Blush</label>
+            <label class="swatch"><input type="radio" name="noteColor" value="mint"><span class="dot" style="--sw: var(--mint)"></span>Mint</label>
+            <label class="swatch"><input type="radio" name="noteColor" value="peach"><span class="dot" style="--sw: var(--peach)"></span>Peach</label>
+            <label class="swatch"><input type="radio" name="noteColor" value="lavender"><span class="dot" style="--sw: var(--lavender)"></span>Lavender</label>
+            <label class="swatch"><input type="radio" name="noteColor" value="cyan"><span class="dot" style="--sw: var(--cyan)"></span>Cyan</label>
+          </div>
+        </fieldset>
+
+        <div class="field-row">
+          <label class="field" for="wishText">Your wish</label>
+          <span class="count" id="wishChars">0/180</span>
+        </div>
+        <textarea class="input area" id="wishText" maxlength="180" rows="4" placeholder="Write something sweet for Andriya"></textarea>
+
+        <div class="center"><button class="btn" id="pinBtn" type="button">Pin my wish</button></div>
+        <p class="form-msg" id="wishMsg" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. MINI-GAMES ============ -->
   <section class="panel" id="games">
     <div class="wrap">
       <h2 class="section-title">Birthday Mini-Games</h2>
@@ -1034,8 +994,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     </div>
   </section>
 
-  <!-- ============ 4c. LETTER ============ -->
-  <!-- To change the letter, edit the LETTER constant near the top of the script at the bottom of this file. -->
+  <!-- ============ 7. LETTER ============ -->
   <section class="panel" id="letter">
     <div class="wrap">
       <h2 class="section-title">Something Special From Your Sister</h2>
@@ -1047,7 +1006,6 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
           <div class="env-box">
             <div class="env-back" aria-hidden="true"></div>
 
-            <!-- the handwritten sheet: lives between the back and the front of the envelope -->
             <div class="paper" id="letterPaper" role="region" aria-label="Birthday letter for Andriya" aria-hidden="true" inert>
               <div class="paper-scroll" id="letterScroll" tabindex="0">
                 <h3 id="letterGreeting"></h3>
@@ -1083,15 +1041,13 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 <script>
 /* =========================================================
    EASY-TO-EDIT CONTENT
-   Swap the file names or captions here. Put the images in the
-   same folder as this file (or change the paths).
    ========================================================= */
 const PHOTOS = [
-  { src: "photo1.jpg", caption: "Caption for photo 1" },
-  { src: "photo2.jpg", caption: "Caption for photo 2" },
-  { src: "photo3.jpg", caption: "Caption for photo 3" },
-  { src: "photo4.jpg", caption: "Caption for photo 4" },
-  { src: "photo5.jpg", caption: "Caption for photo 5" }
+  { src: "photo1.jpg", alt: "Andriya photo 1" },
+  { src: "photo2.jpg", alt: "Andriya photo 2" },
+  { src: "photo3.jpg", alt: "Andriya photo 3" },
+  { src: "photo4.jpg", alt: "Andriya photo 4" },
+  { src: "photo5.jpg", alt: "Andriya photo 5" }
 ];
 
 const QUESTIONS = [
@@ -1107,7 +1063,6 @@ const QUESTIONS = [
   { question: "What is her favorite music genre?", options: ["Pop", "R&B", "Rock", "Indie"], answer: "Pop" }
 ];
 
-// Funny reactions: first entry whose "min" the score reaches
 const REACTIONS = [
   { min: 10, text: "PERFECT! You're Andriya's number one expert. Or you peeked at her diary. 🕵️" },
   { min: 8,  text: "Wow, you really know her! Basically her best friend material. 🌟" },
@@ -1117,13 +1072,6 @@ const REACTIONS = [
   { min: 0,  text: "Zero?! Are you sure you're at the right party? 😂" }
 ];
 
-/* =========================================================
-   YOUR CONTENT: LETTER + STARTER WISHES
-   ---------------------------------------------------------
-   Paste your own letter into LETTER below.
-   - greeting / closing / signature are single lines.
-   - body: leave a BLANK LINE between paragraphs.
-   ========================================================= */
 const LETTER = {
   greeting: "Dear Andriya,",
   body: `Bro, I still can't believe you turned 12! I still remember when you were just a baby and how desperately I wanted you to grow up so I could finally play with you. I loved you from the exact moment you were born, man—you were the cutest, most beautiful baby I have ever seen.
@@ -1137,7 +1085,7 @@ You were the best gift I've ever received in my life. I love you, byeee!`,
   signature: "Alphine Sunil"
 };
 
-// Sample notes shown the first time the board loads. Colors: blush, mint, peach, lavender.
+// Sample notes shown when the board has no wishes yet. Colors: blush, mint, peach, lavender, cyan.
 const STARTER_WISHES = [
   { name: "Your biggest fan", color: "blush",    text: "Happy 12th birthday, Andriya! Wishing you a day full of cake, chips and giggles! 🎂" },
   { name: "A friend",         color: "mint",     text: "Twelve looks amazing on you. Go have the most fun day ever!" },
@@ -1149,10 +1097,8 @@ const STARTER_WISHES = [
    ========================================================= */
 const $ = (id) => document.getElementById(id);
 
-// Fresh start: the earlier test data lived under these old keys, so clear them once (the site now uses "-v2" keys)
 try { ["andriya-quiz-board", "andriya-wishes-board", "andriya-wishes-board-v2", "andriya-balloon-best"].forEach(k => localStorage.removeItem(k)); } catch (e) { /* storage blocked */ }
 
-// Safe storage: falls back to memory if localStorage is blocked
 const store = (() => {
   const mem = {};
   return {
@@ -1170,7 +1116,7 @@ let particles = [], rafId = null;
 const CONFETTI_COLORS = ["#F29BB5", "#E3B94C", "#B9A2F5", "#7FD3A8", "#FFB98A", "#7DBDF2", "#F7DE92"];
 
 let canvasW = 0, canvasH = 0;
-function sizeCanvas() {   // runs only when a burst starts, and only if the viewport size changed
+function sizeCanvas() {
   if (canvasW === innerWidth && canvasH === innerHeight) return;
   canvasW = innerWidth; canvasH = innerHeight;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1224,7 +1170,6 @@ function confettiShow() {
 /* =========================================================
    WELCOME GATE + MUSIC
    ========================================================= */
-// floating confetti and balloons on the welcome screen (removed together with the gate)
 (function gateConfetti() {
   const fx = $("gateFx");
   const colors = ["#F29BB5", "#E3B94C", "#B794F6", "#81E6D9", "#FFB98A", "#7DBDF2", "#F7DE92"];
@@ -1244,7 +1189,6 @@ function confettiShow() {
   fx.innerHTML = html;
 })();
 
-// soft twinkling stars drifting in the background
 (function sparkleField() {
   const colors = ["#B794F6", "#81E6D9", "#E3B94C", "#F29BB5", "#D8C2FF"];
   let html = "";
@@ -1261,7 +1205,7 @@ bgm.volume = 0.6;
 
 $("openBtn").addEventListener("click", () => {
   confettiShow();
-  bgm.play().catch(() => { /* bday-song.mp3 missing or blocked: site still works */ });
+  bgm.play().catch(() => {});
   $("gate").classList.add("leaving");
   $("main").classList.add("revealed");
   muteBtn.classList.add("show");
@@ -1276,10 +1220,10 @@ muteBtn.addEventListener("click", () => {
 });
 
 /* =========================================================
-   PHOTO MONTAGE
+   PHOTO MONTAGE (no captions below photos)
    ========================================================= */
 (function slideshow() {
-  const track = $("track"), dots = $("dots"), caption = $("caption");
+  const track = $("track"), dots = $("dots");
   let i = 0, timer = null;
 
   const placeholder = (name) => "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -1295,7 +1239,7 @@ muteBtn.addEventListener("click", () => {
     const s = document.createElement("div");
     s.className = "slide";
     const img = document.createElement("img");
-    img.src = p.src; img.alt = p.caption; img.loading = "lazy"; img.draggable = false;
+    img.src = p.src; img.alt = p.alt || ("Photo " + (n + 1)); img.loading = "lazy"; img.draggable = false;
     img.onerror = () => { img.onerror = null; img.src = placeholder(p.src); };
     s.appendChild(img); track.appendChild(s);
 
@@ -1308,9 +1252,8 @@ muteBtn.addEventListener("click", () => {
   function go(n) {
     i = (n + PHOTOS.length) % PHOTOS.length;
     track.style.transform = `translateX(${-i * 100}%)`;
-    caption.textContent = PHOTOS[i].caption;
     [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
-    $("viewport").dataset.atStart = String(i === 0);                    // lets the page swipe take over at the ends
+    $("viewport").dataset.atStart = String(i === 0);
     $("viewport").dataset.atEnd   = String(i === PHOTOS.length - 1);
   }
   function restart() { clearInterval(timer); timer = setInterval(() => go(i + 1), 5000); }
@@ -1318,7 +1261,6 @@ muteBtn.addEventListener("click", () => {
   $("prevBtn").onclick = () => { go(i - 1); restart(); };
   $("nextBtn").onclick = () => { go(i + 1); restart(); };
 
-  // swipe
   let sx = null, sy = null;
   const vp = $("viewport");
   vp.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
@@ -1328,14 +1270,13 @@ muteBtn.addEventListener("click", () => {
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
       const dir = dx < 0 ? 1 : -1;
       const atEdge = (dir > 0 && i === PHOTOS.length - 1) || (dir < 0 && i === 0);
-      if (!atEdge) { go(i + dir); restart(); }                          // at the first/last photo the page swipe moves to the next section
+      if (!atEdge) { go(i + dir); restart(); }
     }
     sx = sy = null;
   }, { passive: true });
   vp.addEventListener("touchcancel", () => { sx = sy = null; }, { passive: true });
 
   go(0); restart();
-  // only auto-advance while the montage is on screen
   new IntersectionObserver(([en]) => { if (en.isIntersecting) restart(); else clearInterval(timer); }).observe($("frame"));
 })();
 
@@ -1352,12 +1293,11 @@ muteBtn.addEventListener("click", () => {
     screens[name].classList.add("on");
   }
 
-  // ----- leaderboard -----
   const getBoard = () => { try { return JSON.parse(store.get(BOARD_KEY)) || []; } catch (e) { return []; } };
   const saveBoard = (b) => store.set(BOARD_KEY, JSON.stringify(b));
 
   function renderBoard(container) {
-    const board = getBoard().sort((a, b) => b.score - a.score || a.time - b.time);   // every saved score is shown
+    const board = getBoard().sort((a, b) => b.score - a.score || a.time - b.time);
     container.innerHTML = "";
     const h = document.createElement("h3"); h.textContent = "🏆 Leaderboard"; container.appendChild(h);
     const ol = document.createElement("ol");
@@ -1377,7 +1317,6 @@ muteBtn.addEventListener("click", () => {
   }
   function renderAllBoards() { renderBoard($("boardStart")); renderBoard($("boardEnd")); }
 
-  // ----- flow -----
   function start() {
     const name = $("playerName").value.trim();
     if (!name) { $("playerName").focus(); $("playerName").placeholder = "Please type your name first"; return; }
@@ -1425,9 +1364,11 @@ muteBtn.addEventListener("click", () => {
   }
 
   function finish() {
+    const entry = { name: player, score, time: Date.now() };
     const board = getBoard();
-    board.push({ name: player, score, time: Date.now() });
-    saveBoard(board.sort((a, b) => b.score - a.score || a.time - b.time).slice(0, 2000));   // scores are kept (2000 is only a safety ceiling)
+    board.push(entry);
+    saveBoard(board.sort((a, b) => b.score - a.score || a.time - b.time).slice(0, 2000));
+    if (typeof window.__pushCloudScore === "function") window.__pushCloudScore(entry);
 
     $("endName").textContent = player + ", you scored";
     $("endScore").textContent = score + " / " + QUESTIONS.length;
@@ -1446,12 +1387,12 @@ muteBtn.addEventListener("click", () => {
   $("playerName").addEventListener("keydown", e => { if (e.key === "Enter") start(); });
   $("qNext").onclick = next;
   $("playAgain").onclick = again;
+  window.renderLeaderboard = renderAllBoards;
   renderAllBoards();
 })();
 
 /* =========================================================
    SHARED SOUND EFFECTS
-   Tiny synthesized sounds (no files). They follow the music mute button.
    ========================================================= */
 const sfx = (() => {
   let ac = null;
@@ -1462,7 +1403,7 @@ const sfx = (() => {
     try { ac = new AC(); } catch (e) { ac = null; }
     return ac;
   };
-  const live = () => {                       // a ready AudioContext, or null when muted / unsupported
+  const live = () => {
     if (typeof bgm !== "undefined" && bgm.muted) return null;
     const a = getCtx();
     if (a && a.state === "suspended") a.resume();
@@ -1482,25 +1423,25 @@ const sfx = (() => {
   }
   return {
     unlock() { const a = getCtx(); if (a && a.state === "suspended") a.resume(); },
-    pop(combo) { tone(480 + Math.min(combo || 0, 12) * 45, 0.09, "triangle", 0.14, 140); },   // pitch climbs with the combo
+    pop(combo) { tone(480 + Math.min(combo || 0, 12) * 45, 0.09, "triangle", 0.14, 140); },
     gold()  { [784, 988, 1319].forEach((f, k) => tone(f, 0.2, "sine", 0.1, null, k * 0.06)); },
     clock() { tone(660, 0.1, "square", 0.05, 990); tone(990, 0.12, "square", 0.05, 1320, 0.09); },
-    grab(pts) { tone(560 + pts * 110, 0.1, "sine", 0.12, 900 + pts * 140); },   // caught a treat
-    ouch()  { tone(220, 0.2, "sawtooth", 0.09, 90); },                          // caught a chili or raindrop
+    grab(pts) { tone(560 + pts * 110, 0.1, "sine", 0.12, 900 + pts * 140); },
+    ouch()  { tone(220, 0.2, "sawtooth", 0.09, 90); },
     tada()  { [523, 659, 784, 1047].forEach((f, k) => tone(f, 0.28, "triangle", 0.12, null, k * 0.1)); },
-    haptic(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) { /* not supported */ } }
+    haptic(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
   };
 })();
 
 /* =========================================================
-   MINI-GAME 1: BALLOON POP (combos, gold cakes, time clocks)
+   MINI-GAME 1: BALLOON POP
    ========================================================= */
 (function balloonPop() {
   const KEY = "andriya-balloon-best-v2";
-  const DURATION = 30;                                   // seconds
+  const DURATION = 30;
   const COLORS = ["#F29BB5", "#B9A2F5", "#7FD3A8", "#FFB98A", "#7DBDF2", "#FF8FA3"];
   const GOLD_CHANCE = 0.11, CLOCK_CHANCE = 0.06;
-  const COMBO_WINDOW = 1000;                             // ms between pops that keeps a combo alive
+  const COMBO_WINDOW = 1000;
   const arena = $("bpArena"), comboEl = $("bpCombo");
 
   let score = 0, endAt = 0, running = false, tickId = null, spawnId = null;
@@ -1508,14 +1449,14 @@ const sfx = (() => {
   let best = parseInt(store.get(KEY), 10) || 0;
   $("bpBest").textContent = best;
 
-  const mult = () => Math.min(4, 1 + Math.floor(combo / 5));          // x2 from 5 pops in a row, x3 from 10, x4 from 15
+  const mult = () => Math.min(4, 1 + Math.floor(combo / 5));
   const progress = () => !running ? 0 : Math.min(1, Math.max(0, 1 - (endAt - Date.now()) / (DURATION * 1000)));
 
   function spawn() {
     const r = Math.random();
     const kind = r < GOLD_CHANCE ? "gold" : r < GOLD_CHANCE + CLOCK_CHANCE ? "clock" : "plain";
     const w = arena.clientWidth, h = arena.clientHeight;
-    const dur = (kind === "gold" ? 2.8 + Math.random() * 0.8 : 3.8 + Math.random() * 2) * (1 - 0.28 * progress());   // faster late in the game
+    const dur = (kind === "gold" ? 2.8 + Math.random() * 0.8 : 3.8 + Math.random() * 2) * (1 - 0.28 * progress());
     const el = document.createElement("button");
     el.type = "button";
     el.className = "balloon" + (kind === "plain" ? "" : " " + kind);
@@ -1530,17 +1471,17 @@ const sfx = (() => {
     el.innerHTML = '<span class="b-body" style="animation-delay:-' + (Math.random() * 1.5).toFixed(2) + 's">' +
                    (kind === "gold" ? "🎂" : kind === "clock" ? "⏱" : "") + "</span>";
     arena.appendChild(el);
-    setTimeout(() => el.remove(), dur * 1000 + 300);     // floated away
+    setTimeout(() => el.remove(), dur * 1000 + 300);
   }
 
   function loop() {
     if (!running) return;
     spawn();
-    if (Math.random() < 0.1) {                           // now and then a little wave of balloons
+    if (Math.random() < 0.1) {
       setTimeout(() => running && spawn(), 130);
       setTimeout(() => running && spawn(), 260);
     }
-    spawnId = setTimeout(loop, 520 - 220 * progress() + Math.random() * 220);   // gets busier over time
+    spawnId = setTimeout(loop, 520 - 220 * progress() + Math.random() * 220);
   }
 
   function burst(x, y, color, n, stars) {
@@ -1589,14 +1530,14 @@ const sfx = (() => {
     $("bpScore").textContent = score;
 
     const a = arena.getBoundingClientRect(), r = el.getBoundingClientRect();
-    const cx = r.left - a.left + r.width / 2, cy = r.top - a.top + 34;     // middle of the balloon body
+    const cx = r.left - a.left + r.width / 2, cy = r.top - a.top + 34;
     burst(cx, cy, el.style.getPropertyValue("--bc") || "#F29BB5", kind === "gold" ? 12 : 8, kind === "gold");
     floatText("+" + gained, cx, cy - 18, kind === "gold" ? "big" : "");
 
     if (kind === "clock") { endAt += 2000; floatText("+2s", cx, cy + 14, "time"); sfx.clock(); }
     else if (kind === "gold") { flash(); sfx.gold(); }
     else sfx.pop(combo);
-    if (combo > 0 && combo % 5 === 0) flash();                              // milestone glow at 5, 10, 15...
+    if (combo > 0 && combo % 5 === 0) flash();
     sfx.haptic(kind === "gold" ? [12, 30, 12] : 8);
     showCombo();
 
@@ -1604,7 +1545,6 @@ const sfx = (() => {
     setTimeout(() => el.remove(), 300);
   }
 
-  // pointerdown = instant response on touch; click handles keyboard (detail 0)
   arena.addEventListener("pointerdown", e => {
     const b = e.target.closest(".balloon");
     if (b) { e.preventDefault(); pop(b); }
@@ -1619,7 +1559,7 @@ const sfx = (() => {
     const sec = Math.ceil(left / 1000);
     $("bpTime").textContent = sec;
     $("bpTimePill").classList.toggle("urgent", sec <= 5);
-    if (combo && Date.now() - lastPop > COMBO_WINDOW) { combo = 0; comboEl.classList.remove("show"); }   // combo ran out
+    if (combo && Date.now() - lastPop > COMBO_WINDOW) { combo = 0; comboEl.classList.remove("show"); }
     if (left <= 0) end();
   }
 
@@ -1670,17 +1610,17 @@ const sfx = (() => {
 })();
 
 /* =========================================================
-   MINI-GAME 2: CAKE CATCHER (30 seconds, drag or tap-hold to move the plate)
+   MINI-GAME 2: CAKE CATCHER
    ========================================================= */
 (function cakeCatcher() {
   const KEY = "andriya-catcher-best-v2";
-  const DURATION = 30;                                   // seconds
+  const DURATION = 30;
   const PLATE_W = 88;
   const EMOJI = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
   const TYPES = {
     cupcake: { pts: 1,  glyph: "🧁" },
     gift:    { pts: 2,  glyph: "🎁" },
-    crown:   { pts: 3,  glyph: null },                   // drawn: golden crown with a "12"
+    crown:   { pts: 3,  glyph: null },
     chili:   { pts: -2, glyph: "🌶️", bad: true },
     drop:    { pts: -1, glyph: "💧",  bad: true }
   };
@@ -1709,7 +1649,6 @@ const sfx = (() => {
     plateX = clampX(plateX || W / 2);
   }
 
-  // ---------- drawing ----------
   function drawPlate() {
     cx.save();
     cx.translate(plateX, plateY());
@@ -1723,7 +1662,7 @@ const sfx = (() => {
     cx.fillStyle = rim;
     cx.beginPath(); cx.ellipse(0, -8, 47, 9, 0, 0, Math.PI * 2); cx.fill();
     cx.strokeStyle = "rgba(148,105,15,.45)"; cx.lineWidth = 1.5; cx.stroke();
-    cx.fillStyle = "#4B3355";                                           // cute face
+    cx.fillStyle = "#4B3355";
     cx.beginPath(); cx.arc(-12, 8, 2.8, 0, 7); cx.arc(12, 8, 2.8, 0, 7); cx.fill();
     cx.strokeStyle = "#4B3355"; cx.lineWidth = 2; cx.lineCap = "round";
     cx.beginPath(); cx.arc(0, 9, 7, 0.2 * Math.PI, 0.8 * Math.PI); cx.stroke();
@@ -1749,7 +1688,7 @@ const sfx = (() => {
     const T = TYPES[it.type];
     cx.save();
     cx.translate(it.x, it.y); cx.rotate(it.rot);
-    cx.fillStyle = T.bad ? "rgba(255,110,110,.22)" : "rgba(255,255,255,.35)";    // soft halo: red = dodge, white = catch
+    cx.fillStyle = T.bad ? "rgba(255,110,110,.22)" : "rgba(255,255,255,.35)";
     cx.beginPath(); cx.arc(0, 0, 21, 0, 7); cx.fill();
     if (it.type === "crown") drawCrown();
     else { cx.font = "30px " + EMOJI; cx.textAlign = "center"; cx.textBaseline = "middle"; cx.fillText(T.glyph, 0, 1); }
@@ -1759,7 +1698,7 @@ const sfx = (() => {
     cx.clearRect(0, 0, W, H);
     cx.save();
     if (shake > 0.4) cx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
-    cx.fillStyle = "rgba(183,148,246,.22)";                                  // little table at the bottom
+    cx.fillStyle = "rgba(183,148,246,.22)";
     cx.fillRect(0, H - 16, W, 16);
     items.forEach(drawItem);
     drawPlate();
@@ -1775,7 +1714,6 @@ const sfx = (() => {
     cx.restore();
   }
 
-  // ---------- game logic ----------
   function hud() {
     const s = Math.ceil(left);
     $("ccTime").textContent = s;
@@ -1792,7 +1730,7 @@ const sfx = (() => {
 
   function spawn(level) {
     let type;
-    if (Math.random() < 0.26 + 0.12 * level) type = Math.random() < 0.6 ? "chili" : "drop";      // more hazards later on
+    if (Math.random() < 0.26 + 0.12 * level) type = Math.random() < 0.6 ? "chili" : "drop";
     else { const g = Math.random(); type = g < 0.10 ? "crown" : g < 0.38 ? "gift" : "cupcake"; }
     items.push({
       type, x0: rand(24, W - 24), x: 0, y: -24, t: rand(0, 6), amp: rand(6, 16), wob: rand(2, 4),
@@ -1803,7 +1741,7 @@ const sfx = (() => {
   function caught(it) {
     const T = TYPES[it.type], py = plateY();
     if (T.bad) {
-      const loss = Math.min(score, -T.pts);                      // the score never goes below zero
+      const loss = Math.min(score, -T.pts);
       score -= loss; streak = 0; shake = 11;
       floatText("-" + (-T.pts), it.x, py - 26, "#D9453F");
       sfx.ouch(); sfx.haptic([30, 30, 30]);
@@ -1825,8 +1763,8 @@ const sfx = (() => {
     const level = 1 - left / DURATION, py = plateY();
 
     const key = (keyR ? 1 : 0) - (keyL ? 1 : 0), mv = dir || key;
-    if (mv && (key || performance.now() - holdStart > 140)) { plateX += mv * W * 1.15 * dt; targetX = null; }   // hold = glide; a quick tap = nudge
-    else if (targetX !== null) plateX += (targetX - plateX) * Math.min(1, dt * 16);                              // drag = follow the finger
+    if (mv && (key || performance.now() - holdStart > 140)) { plateX += mv * W * 1.15 * dt; targetX = null; }
+    else if (targetX !== null) plateX += (targetX - plateX) * Math.min(1, dt * 16);
     plateX = clampX(plateX);
 
     spawnIn -= dt;
@@ -1850,7 +1788,7 @@ const sfx = (() => {
 
   function frame(t) {
     if (!running) return;
-    const dt = Math.min(0.05, (t - last) / 1000);           // long gaps (tab hidden) never jump the game ahead
+    const dt = Math.min(0.05, (t - last) / 1000);
     last = t;
     if (!paused) update(dt);
     if (running) draw();
@@ -1894,15 +1832,14 @@ const sfx = (() => {
     }
   }
 
-  // ---------- controls: drag the plate, hold the buttons, or use the arrow keys ----------
   const localX = e => e.clientX - cv.getBoundingClientRect().left;
   arena.addEventListener("pointerdown", e => {
     if (!running) return;
     dragging = true; targetX = clampX(localX(e));
-    try { arena.setPointerCapture(e.pointerId); } catch (err) { /* not critical */ }
+    try { arena.setPointerCapture(e.pointerId); } catch (err) {}
   });
   arena.addEventListener("pointermove", e => {
-    if (running && (dragging || e.pointerType === "mouse")) targetX = clampX(localX(e));   // a mouse follows without clicking
+    if (running && (dragging || e.pointerType === "mouse")) targetX = clampX(localX(e));
   });
   ["pointerup", "pointercancel"].forEach(t => arena.addEventListener(t, () => { dragging = false; }));
 
@@ -1911,7 +1848,7 @@ const sfx = (() => {
       e.preventDefault();
       if (!running) return;
       sfx.unlock();
-      dir = d; holdStart = performance.now(); targetX = clampX(plateX + d * 64);       // quick tap = a small nudge
+      dir = d; holdStart = performance.now(); targetX = clampX(plateX + d * 64);
       btn.classList.add("held");
     });
     const release = () => { if (dir === d) dir = 0; btn.classList.remove("held"); };
@@ -1930,7 +1867,6 @@ const sfx = (() => {
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keyR = false;
   });
 
-  // pause while the page is slid out of view
   new IntersectionObserver(([en]) => { paused = !en.isIntersecting; }, { threshold: 0.15 }).observe(arena);
   addEventListener("resize", () => { resize(); if (!running) draw(); });
 
@@ -1940,12 +1876,12 @@ const sfx = (() => {
 })();
 
 /* =========================================================
-   WISHES BOARD
+   WISHES BOARD & WRITE A WISH
    ========================================================= */
 (function wishesBoard() {
   const KEY = "andriya-wishes-final-v3";
-  const MAX_NAME = 25, MAX_TEXT = 180, MAX_NOTES = 500;   // wishes are kept; this is only a safety ceiling
-  const COLORS = ["blush", "mint", "peach", "lavender"];
+  const MAX_NAME = 25, MAX_TEXT = 180, MAX_NOTES = 500;
+  const COLORS = ["blush", "mint", "peach", "lavender", "cyan"];
   const PER_PAGE = 5;
   const track = $("notes"), viewport = $("wishViewport"), msgEl = $("wishMsg");
   let lastAdded = null, page = 0, pageCount = 1;
@@ -1954,13 +1890,14 @@ const sfx = (() => {
     id: String(w.id || ("w" + Math.random().toString(36).slice(2))),
     name: String(w.name || "A friend").slice(0, MAX_NAME),
     text: String(w.text || "").slice(0, MAX_TEXT),
-    color: COLORS.includes(w.color) ? w.color : "blush"
+    color: COLORS.includes(w.color) ? w.color : "blush",
+    createdAt: Number(w.createdAt) || 0
   });
 
   function load() {
     const raw = store.get(KEY);
-    if (raw === null) {   // first visit: seed with starter notes
-      const seed = STARTER_WISHES.map((w, i) => clean({ ...w, id: "starter-" + i }));
+    if (raw === null) {
+      const seed = STARTER_WISHES.map((w, i) => clean({ ...w, id: "starter-" + i, createdAt: i + 1 }));
       store.set(KEY, JSON.stringify(seed));
       return seed;
     }
@@ -1972,14 +1909,13 @@ const sfx = (() => {
   let wishes = load();
   const save = () => store.set(KEY, JSON.stringify(wishes));
 
-  // gentle, repeatable tilt from the note id
   function hashOf(id) {
     let h = 0;
     for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) | 0;
     return Math.abs(h);
   }
-  const tilt = id => ((hashOf(id) % 7) - 3) * 0.9;                       // about -2.7 to +2.7 degrees
-  const DECOS = ["🎂", "✨", "🎈", "⭐", "🎁", "💜", "🧁", "🎉"];            // each note gets a little birthday sticker
+  const tilt = id => ((hashOf(id) % 7) - 3) * 0.9;
+  const DECOS = ["🎂", "✨", "🎈", "⭐", "🎁", "💜", "🧁", "🎉"];
   const decoFor = id => DECOS[(hashOf(id) >> 3) % DECOS.length];
 
   function buildNote(w, isNew) {
@@ -1995,14 +1931,13 @@ const sfx = (() => {
     return note;
   }
 
-  // slide to a page (animate = false snaps instantly, used after the board is rebuilt)
   function setPage(n, animate) {
     page = Math.max(0, Math.min(n, pageCount - 1));
     if (!animate) track.style.transition = "none";
     track.style.transform = "translateX(" + (-page * 100) + "%)";
     if (!animate) { void track.offsetWidth; track.style.transition = ""; }
     [...track.children].forEach((pg, i) => {
-      pg.inert = i !== page;                                  // off-screen notes can't be tabbed to
+      pg.inert = i !== page;
       pg.setAttribute("aria-hidden", i !== page ? "true" : "false");
     });
     updatePager();
@@ -2010,13 +1945,13 @@ const sfx = (() => {
 
   function updatePager() {
     $("wishPager").hidden = pageCount <= 1;
-    viewport.dataset.atStart = String(page === 0);                       // lets the page swipe take over at the ends
+    viewport.dataset.atStart = String(page === 0);
     viewport.dataset.atEnd   = String(page >= pageCount - 1);
     $("wishPageText").textContent = "Page " + (page + 1) + " of " + pageCount;
     $("wishPrev").disabled = page === 0;
     $("wishNext").disabled = page >= pageCount - 1;
     const dots = $("wishDots");
-    dots.hidden = pageCount > 8;                              // too many pages: the "Page X of Y" text is enough
+    dots.hidden = pageCount > 8;
     [...dots.children].forEach((d, i) => {
       d.classList.toggle("on", i === page);
       if (i === page) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current");
@@ -2024,14 +1959,14 @@ const sfx = (() => {
   }
 
   function render() {
-    const added = lastAdded; lastAdded = null;               // only the newest pin gets the pop-in and the page jump
+    const added = lastAdded; lastAdded = null;
     track.innerHTML = "";
     $("wishCount").textContent = wishes.length ? "(" + wishes.length + ")" : "";
 
     pageCount = Math.max(1, Math.ceil(wishes.length / PER_PAGE));
     if (added) {
       const idx = wishes.findIndex(w => w.id === added);
-      if (idx >= 0) page = Math.floor(idx / PER_PAGE);       // jump to the page holding the new note
+      if (idx >= 0) page = Math.floor(idx / PER_PAGE);
     }
 
     for (let p = 0; p < pageCount; p++) {
@@ -2076,17 +2011,29 @@ const sfx = (() => {
     if (!name) { say("Please add your name first.", true); $("wishName").focus(); return; }
     if (!text) { say("Write a short wish before pinning it.", true); $("wishText").focus(); return; }
 
-    const w = clean({ id: "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, text, color });
+    const w = clean({
+      id: "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      name,
+      text,
+      color,
+      createdAt: Date.now()
+    });
     wishes.unshift(w);
     wishes = wishes.slice(0, MAX_NOTES);
     lastAdded = w.id;
     save(); render();
+    if (typeof window.__pushCloudWish === "function") window.__pushCloudWish(w);
 
     $("wishText").value = ""; $("wishChars").textContent = "0/" + MAX_TEXT;
     say("Your wish is pinned! 🎉", false);
     const r = $("pinBtn").getBoundingClientRect();
     confettiBurst(r.left + r.width / 2, r.top, 70);
-    $("notesTop").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+
+    // Automatically slide over to the Wishes board so you can see your newly pinned note right away
+    setTimeout(() => {
+      if (typeof window.__goSection === "function") window.__goSection("wishes");
+      say("", false);
+    }, 450);
   }
 
   $("wishText").addEventListener("input", e => { $("wishChars").textContent = e.target.value.length + "/" + MAX_TEXT; });
@@ -2095,7 +2042,6 @@ const sfx = (() => {
   $("wishName").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("wishText").focus(); } });
   $("pinBtn").onclick = submit;
 
-  // paging: buttons, swipe, and a guard so keyboard focus can never scroll the clipped viewport sideways
   $("wishPrev").onclick = () => setPage(page - 1, true);
   $("wishNext").onclick = () => setPage(page + 1, true);
   viewport.addEventListener("scroll", () => { viewport.scrollLeft = 0; });
@@ -2113,11 +2059,18 @@ const sfx = (() => {
   }, { passive: true });
   viewport.addEventListener("touchcancel", () => { sx = sy = null; }, { passive: true });
 
+  window.__setCloudWishes = function (cloudList) {
+    if (!Array.isArray(cloudList)) return;
+    wishes = cloudList.map(clean).filter(w => w.text);
+    save();
+    render();
+  };
+
   render();
 })();
 
 /* =========================================================
-   LETTER: paper slides out of / back into the envelope
+   LETTER
    ========================================================= */
 (function letter() {
   const stage = $("letterStage"), toggle = $("letterToggle"), paper = $("letterPaper"), scroller = $("letterScroll");
@@ -2137,24 +2090,24 @@ const sfx = (() => {
     stage.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", String(open));
     toggle.textContent = open ? "Fold & Seal Letter" : "Open Letter";
-    paper.inert = !open;                                   // a tucked-in letter can't be tabbed to or scrolled
+    paper.inert = !open;
     paper.setAttribute("aria-hidden", String(!open));
     if (open) {
       scroller.scrollTop = 0;
-      if (firstOpen) { firstOpen = false; setTimeout(confettiShow, 900); }   // once the paper is out
+      if (firstOpen) { firstOpen = false; setTimeout(confettiShow, 900); }
     }
   }
 
   toggle.onclick = () => setOpen(!stage.classList.contains("open"));
   $("letterFold").onclick = () => setOpen(false);
   $("envSlot").addEventListener("click", e => {
-    if (e.target.closest("#letterPaper")) return;          // taps on the sheet itself (e.g. its fold button) never reopen it
+    if (e.target.closest("#letterPaper")) return;
     if (!stage.classList.contains("open")) setOpen(true);
   });
 })();
 
 /* =========================================================
-   SECTION NAVIGATION: tap the nav, press arrow keys, or swipe a finger sideways
+   SECTION NAVIGATION
    ========================================================= */
 (function deck() {
   const main = $("main"), track = $("deck"), nav = $("nav");
@@ -2167,20 +2120,20 @@ const sfx = (() => {
 
   function show(i, animate, keepScroll) {
     i = Math.max(0, Math.min(i, panels.length - 1));
-    if (i === current) {   // same tab tapped again: glide back to the top of that page
+    if (i === current) {
       panels[i].scrollTo({ top: 0, behavior: reduceMotion() ? "auto" : "smooth" });
       return;
     }
     const from = current < 0 ? i : current;
-    if (animate && !keepScroll) panels[i].scrollTop = 0;   // a page opened from the nav starts at its top
+    if (animate && !keepScroll) panels[i].scrollTop = 0;
     current = i;
 
     const steps = Math.min(Math.abs(i - from), 5);
     track.style.transitionDuration = animate ? (0.45 + 0.08 * steps).toFixed(2) + "s" : "0s";
     track.style.transform = restingTransform();
 
-    panels.forEach((p, k) => {                          // only the visible page can be tabbed to or read out
-      p.classList.toggle("is-active", k === i);          // drives the entrance animation
+    panels.forEach((p, k) => {
+      p.classList.toggle("is-active", k === i);
       p.inert = k !== i;
       p.setAttribute("aria-hidden", k === i ? "false" : "true");
     });
@@ -2190,10 +2143,14 @@ const sfx = (() => {
       if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
       if (on && !a.classList.contains("brand")) nav.scrollLeft = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
     });
-    if (animate) { try { history.replaceState(null, "", "#" + ids[i]); } catch (e) { /* sandboxed preview */ } }
+    if (animate) { try { history.replaceState(null, "", "#" + ids[i]); } catch (e) {} }
   }
 
-  // nav links and any [data-go="section-id"] button
+  window.__goSection = function (sectionId) {
+    const i = ids.indexOf(sectionId);
+    if (i >= 0) show(i, true);
+  };
+
   document.addEventListener("click", e => {
     const el = e.target.closest('[data-go], .nav a[href^="#"]');
     if (!el) return;
@@ -2203,20 +2160,18 @@ const sfx = (() => {
     show(i, true);
   });
 
-  // arrow keys flip between pages on desktop
   document.addEventListener("keydown", e => {
     if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || !main.classList.contains("revealed")) return;
     if (e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
-    if (document.querySelector(".arena.playing")) return;          // arrow keys belong to the game while it runs
+    if (document.querySelector(".arena.playing")) return;
     const next = current + (e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0);
     if (next !== current && next >= 0 && next < panels.length) show(next, true);
   });
 
-  // two-finger sideways swipe on a laptop trackpad also flips pages (vertical scrolling is untouched)
   let wheelAcc = 0, wheelLock = 0, wheelTimer = 0;
   main.addEventListener("wheel", e => {
     if (!main.classList.contains("revealed")) return;
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) * 1.4) { wheelAcc = 0; return; }   // mostly vertical = normal scroll
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) * 1.4) { wheelAcc = 0; return; }
     e.preventDefault();
     const now = performance.now();
     if (now < wheelLock) return;
@@ -2229,15 +2184,9 @@ const sfx = (() => {
     }
   }, { passive: false });
 
-  // ---------- finger swipe ----------
-  // Who owns a touch:
-  //   NO_SWIPE   the game arenas, the on-screen move buttons and text fields keep every touch for themselves
-  //   CAROUSELS  the photo montage and wish board own sideways swipes until they reach their first / last item,
-  //              then the same swipe moves to the neighbouring page
-  //   anything else: a mostly-sideways drag moves the pages; a mostly-vertical drag scrolls the page as usual
   const NO_SWIPE = ".arena, .cc-controls, input, textarea, select, [contenteditable]";
   const atEdge = (el, dir) => (dir > 0 ? el.dataset.atEnd : el.dataset.atStart) === "true";
-  let g = null;   // the gesture in progress
+  let g = null;
 
   function settleBack() {
     track.style.transitionDuration = ".35s";
@@ -2254,16 +2203,16 @@ const sfx = (() => {
     if (!g || g.mode === "scroll" || g.mode === "carousel") return;
     const t = e.touches[0], dx = t.clientX - g.x, dy = t.clientY - g.y;
     if (g.mode === null) {
-      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g.mode = "scroll"; return; }       // vertical scrolling wins
-      if (!(Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.4)) return;                      // not clearly sideways yet
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g.mode = "scroll"; return; }
+      if (!(Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.4)) return;
       const dir = dx < 0 ? 1 : -1;
-      if (g.carousel && !atEdge(g.carousel, dir)) { g.mode = "carousel"; return; }                // the carousel handles this one
+      if (g.carousel && !atEdge(g.carousel, dir)) { g.mode = "carousel"; return; }
       g.mode = "drag";
       track.style.transitionDuration = "0s";
     }
-    if (e.cancelable) e.preventDefault();               // sideways drag: don't also scroll the page
+    if (e.cancelable) e.preventDefault();
     const off = dx - Math.sign(dx) * 12;
-    const resist = (off > 0 && current === 0) || (off < 0 && current === panels.length - 1);   // rubber-band at the ends
+    const resist = (off > 0 && current === 0) || (off < 0 && current === panels.length - 1);
     track.style.transform = "translate3d(calc(" + (-current * 100) + "% + " + (resist ? off * 0.3 : off) + "px), 0, 0)";
   }, { passive: false });
 
@@ -2271,7 +2220,7 @@ const sfx = (() => {
     const gesture = g; g = null;
     if (!gesture || gesture.mode !== "drag") return;
     const dx = e.changedTouches[0].clientX - gesture.x;
-    const speed = Math.abs(dx) / Math.max(1, e.timeStamp - gesture.time);       // px per ms
+    const speed = Math.abs(dx) / Math.max(1, e.timeStamp - gesture.time);
     const next = current + (dx < 0 ? 1 : -1);
     const commit = (Math.abs(dx) > main.clientWidth * 0.22) || (speed > 0.4 && Math.abs(dx) > 30);
     if (commit && next >= 0 && next < panels.length) show(next, true, true);
@@ -2283,134 +2232,97 @@ const sfx = (() => {
     g = null;
   }, { passive: true });
 
-  // typed or pasted #hash
   addEventListener("hashchange", () => {
     const i = ids.indexOf(location.hash.slice(1));
     if (i >= 0 && i !== current) show(i, true);
   });
 
-  // safety: if the browser ever tries to scroll the clipped stage (e.g. focus on an off-screen element), snap it back
   main.addEventListener("scroll", () => { main.scrollLeft = 0; main.scrollTop = 0; });
 
   const start = ids.indexOf(location.hash.slice(1));
   show(start < 0 ? 0 : start, false);
 })();
 </script>
-<!-- Firebase Realtime Database Sync for Wishes & Quiz Leaderboard -->
+
+<!-- Firebase Realtime Database Sync for Cross-Device Wishes & Quiz Leaderboard -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 (function () {
-  const firebaseConfig = {
-    apiKey: "AIzaSyA6FdEiYovhijEqJS_xG07_I6QrswrT6KE",
-    authDomain: "andriya-birthday.firebaseapp.com",
-    databaseURL: "https://andriya-birthday-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "andriya-birthday",
-    storageBucket: "andriya-birthday.firebasestorage.app",
-    messagingSenderId: "614123115467",
-    appId: "1:614123115467:web:6a30c92d56f395c5efdc4e",
-    measurementId: "G-BX78PYK133"
-  };
+  try {
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6FdEiYovhijEqJS_xG07_I6QrswrT6KE",
+      authDomain: "andriya-birthday.firebaseapp.com",
+      databaseURL: "https://andriya-birthday-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "andriya-birthday",
+      storageBucket: "andriya-birthday.firebasestorage.app",
+      messagingSenderId: "614123115467",
+      appId: "1:614123115467:web:6a30c92d56f395c5efdc4e",
+      measurementId: "G-BX78PYK133"
+    };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const db = firebase.database();
-
-  const WISHES_KEY = "andriya-wishes-final-v3";
-  const BOARD_KEY = "andriya-quiz-board-v2";
-
-  let lastRemoteWishesJson = "";
-  let lastRemoteBoardJson = "";
-  let syncingFromRemote = false;
-
-  function triggerUiRefresh() {
-    // Dispatch a storage event & try calling common render/init functions if present
-    try {
-      window.dispatchEvent(new StorageEvent("storage", { key: WISHES_KEY }));
-      window.dispatchEvent(new StorageEvent("storage", { key: BOARD_KEY }));
-    } catch (_) {}
-
-    if (typeof renderWishes === "function") {
-      try { renderWishes(); } catch (_) {}
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
-    if (typeof renderLeaderboard === "function") {
-      try { renderLeaderboard(); } catch (_) {}
-    }
-  }
+    const db = firebase.database();
 
-  // Listen to cloud wishes and update localStorage + UI
-  db.ref("wishes").on("value", (snapshot) => {
-    const val = snapshot.val();
-    const list = val
-      ? Object.entries(val).map(([key, item]) => ({
-          id: (item && item.id) || key,
-          _fbKey: key,
-          ...(typeof item === "object" && item !== null ? item : {})
-        }))
-      : [];
+    window.__pushCloudWish = function (wish) {
+      db.ref("wishes").push({
+        id: wish.id,
+        name: wish.name,
+        text: wish.text,
+        color: wish.color,
+        createdAt: wish.createdAt || Date.now()
+      }).catch(() => {});
+    };
 
-    const serialized = JSON.stringify(list);
-    if (serialized === lastRemoteWishesJson) return;
-    lastRemoteWishesJson = serialized;
+    window.__pushCloudScore = function (entry) {
+      db.ref("leaderboard").push({
+        name: entry.name,
+        score: entry.score,
+        time: entry.time || Date.now()
+      }).catch(() => {});
+    };
 
-    syncingFromRemote = true;
-    localStorage.setItem(WISHES_KEY, JSON.stringify(list));
-    triggerUiRefresh();
-    setTimeout(() => { syncingFromRemote = false; }, 120);
-  });
-
-  // Listen to cloud quiz leaderboard and update localStorage + UI
-  db.ref("leaderboard").on("value", (snapshot) => {
-    const val = snapshot.val();
-    const list = val
-      ? Object.entries(val).map(([key, item]) => ({
-          _fbKey: key,
-          ...(typeof item === "object" && item !== null ? item : {})
-        }))
-      : [];
-
-    list.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.time || 0) - (b.time || 0));
-
-    const serialized = JSON.stringify(list);
-    if (serialized === lastRemoteBoardJson) return;
-    lastRemoteBoardJson = serialized;
-
-    syncingFromRemote = true;
-    localStorage.setItem(BOARD_KEY, JSON.stringify(list));
-    triggerUiRefresh();
-    setTimeout(() => { syncingFromRemote = false; }, 120);
-  });
-
-  // Watch localStorage writes made by your existing wishes & quiz code and push new items to Firebase
-  const originalSetItem = localStorage.setItem.bind(localStorage);
-  localStorage.setItem = function (key, value) {
-    originalSetItem(key, value);
-    if (syncingFromRemote) return;
-
-    try {
-      const parsed = JSON.parse(value);
-      if (!Array.isArray(parsed)) return;
-
-      if (key === WISHES_KEY) {
-        parsed.forEach((wish) => {
-          if (wish && !wish._fbKey) {
-            const cleanWish = { ...wish };
-            db.ref("wishes").push(cleanWish);
-          }
+    db.ref("wishes").on("value", (snapshot) => {
+      const val = snapshot.val();
+      if (!val) {
+        // Seed starter wishes to Firebase once if the cloud database is completely empty
+        STARTER_WISHES.forEach((w, i) => {
+          db.ref("wishes").push({
+            id: "starter-" + i,
+            name: w.name,
+            text: w.text,
+            color: w.color,
+            createdAt: i + 1
+          }).catch(() => {});
         });
-      } else if (key === BOARD_KEY) {
-        parsed.forEach((entry) => {
-          if (entry && !entry._fbKey) {
-            const cleanEntry = { ...entry };
-            db.ref("leaderboard").push(cleanEntry);
-          }
-        });
+        return;
       }
-    } catch (_) {}
-  };
+      const list = Object.entries(val).map(([key, item]) => ({
+        id: (item && item.id) || key,
+        name: item && item.name,
+        text: item && item.text,
+        color: item && item.color,
+        createdAt: (item && item.createdAt) || 0
+      }));
+      list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      if (typeof window.__setCloudWishes === "function") window.__setCloudWishes(list);
+    });
+
+    db.ref("leaderboard").on("value", (snapshot) => {
+      const val = snapshot.val();
+      const list = val
+        ? Object.values(val).filter(item => item && typeof item.name === "string")
+        : [];
+      list.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.time || 0) - (b.time || 0));
+      try { localStorage.setItem("andriya-quiz-board-v2", JSON.stringify(list)); } catch (_) {}
+      if (typeof window.renderLeaderboard === "function") window.renderLeaderboard();
+    });
+  } catch (e) {
+    /* Offline or blocked: localStorage fallback keeps working */
+  }
 })();
 </script>
-
 </body>
 </html>
